@@ -16,6 +16,17 @@ import type { PortfolioMetric } from '@/components/dashboard/uptrade';
 
 export const metadata = { title: `USA Forex Market | Dashboard | ${config.site.name}` } satisfies Metadata;
 
+const usdChangeFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 2,
+});
+
+const formatUsdChange = (value: number): string => {
+  const sign = value >= 0 ? '+' : '-';
+  return `${sign}${usdChangeFormatter.format(Math.abs(value))}`;
+};
+
 const portfolioMetrics: PortfolioMetric[] = [
   { id: 'portfolioValue', label: 'Portfolio value', value: 128400.5, currency: 'USD' },
   { id: 'availableCash', label: 'Available cash', value: 48210.12, currency: 'USD' },
@@ -23,13 +34,13 @@ const portfolioMetrics: PortfolioMetric[] = [
     id: 'dayPnL',
     label: "Today's P&L",
     value: 1540.87,
-    formatter: (value: number) => `${value >= 0 ? '+' : ''}${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+    formattedValue: formatUsdChange(1540.87),
   },
   {
     id: 'totalPnL',
     label: 'Total P&L',
     value: 18450.94,
-    formatter: (value: number) => `${value >= 0 ? '+' : ''}${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+    formattedValue: formatUsdChange(18450.94),
   },
 ];
 

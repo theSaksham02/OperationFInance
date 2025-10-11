@@ -14,6 +14,7 @@ export interface PortfolioMetric {
   label: string;
   value: number;
   currency?: string;
+  formattedValue?: string;
   formatter?: (value: number) => string;
 }
 
@@ -58,16 +59,17 @@ export function PortfolioOverview({ metrics, lastUpdated, sx }: PortfolioOvervie
   return (
     <Grid container spacing={3} sx={sx}>
       {metrics.map((metric) => {
-        const formatter = metric.formatter ?? DEFAULT_FORMATTER;
         const isNegative = metric.value < 0;
         const showCurrency = Boolean(metric.currency);
-        const formattedValue = showCurrency
-          ? metric.value.toLocaleString(undefined, {
-              style: 'currency',
-              currency: metric.currency,
-              maximumFractionDigits: 2,
-            })
-          : formatter(metric.value);
+        const formattedValue =
+          metric.formattedValue ??
+          (showCurrency
+            ? metric.value.toLocaleString(undefined, {
+                style: 'currency',
+                currency: metric.currency,
+                maximumFractionDigits: 2,
+              })
+            : (metric.formatter ?? DEFAULT_FORMATTER)(metric.value));
 
         return (
           <Grid key={metric.id} size={{ xs: 12, sm: 6, lg: 3 }}>

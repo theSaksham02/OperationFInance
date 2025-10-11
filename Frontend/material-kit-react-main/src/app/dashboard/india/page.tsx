@@ -16,6 +16,17 @@ import type { PortfolioMetric } from '@/components/dashboard/uptrade';
 
 export const metadata = { title: `India Market | Dashboard | ${config.site.name}` } satisfies Metadata;
 
+const inrChangeFormatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  maximumFractionDigits: 0,
+});
+
+const formatInrChange = (value: number): string => {
+  const sign = value >= 0 ? '+' : '-';
+  return `${sign}${inrChangeFormatter.format(Math.abs(value))}`;
+};
+
 const portfolioMetrics: PortfolioMetric[] = [
   { id: 'portfolioValue', label: 'Portfolio value', value: 8640000, currency: 'INR' },
   { id: 'availableCash', label: 'Available cash', value: 2450000, currency: 'INR' },
@@ -23,13 +34,13 @@ const portfolioMetrics: PortfolioMetric[] = [
     id: 'dayPnL',
     label: "Today's P&L",
     value: 78500,
-    formatter: (value: number) => `${value >= 0 ? '+' : ''}₹${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
+    formattedValue: formatInrChange(78500),
   },
   {
     id: 'totalPnL',
     label: 'Total P&L',
     value: 364000,
-    formatter: (value: number) => `${value >= 0 ? '+' : ''}₹${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
+    formattedValue: formatInrChange(364000),
   },
 ];
 
