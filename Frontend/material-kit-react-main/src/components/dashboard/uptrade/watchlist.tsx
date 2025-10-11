@@ -13,7 +13,6 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
-import Box from '@mui/material/Box';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
@@ -92,7 +91,7 @@ export function Watchlist({ entries, onAdd, onRemove, currency = 'USD', sx }: Wa
                       </Stack>
                     }
                     secondary={
-                      <Box component="span" sx={{ display: 'inline-flex', mt: 1 }}>
+                      <span style={{ display: 'inline-flex', marginTop: 8 }}>
                         <Chip
                           label={`${entry.changePercent > 0 ? '+' : ''}${entry.changePercent.toFixed(2)}%`}
                           size="small"
@@ -103,7 +102,7 @@ export function Watchlist({ entries, onAdd, onRemove, currency = 'USD', sx }: Wa
                             backgroundColor: alpha(color, 0.12),
                           }}
                         />
-                      </Box>
+                      </span>
                     }
                     primaryTypographyProps={{ component: 'div' }}
                     secondaryTypographyProps={{ component: 'span' }}

@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "lint-and-typecheck",
+			"type": "shell",
+			"command": "pnpm -s -C Frontend/material-kit-react-main lint && pnpm -s -C Frontend/material-kit-react-main typecheck",
+			"problemMatcher": [
+				"$eslint-stylish"
+			]
+		}
+	]
+}

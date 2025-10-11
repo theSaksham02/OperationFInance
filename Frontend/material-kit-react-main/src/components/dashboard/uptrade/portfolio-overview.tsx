@@ -10,7 +10,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 
 export interface PortfolioMetric {
-  id: 'portfolioValue' | 'availableCash' | 'dayPnL' | 'totalPnL';
+  id: string;
   label: string;
   value: number;
   currency?: string;

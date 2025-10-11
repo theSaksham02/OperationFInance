@@ -1,91 +1,12 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
-import Grid from '@mui/material/Grid';
-
 import { config } from '@/config';
-import {
-  AiChatbot,
-  AdvancedChart,
-  HoldingsTable,
-  MarketNews,
-  PortfolioOverview,
-  TradeExecutionWidget,
-  Watchlist,
-} from '@/components/dashboard/uptrade';
-import type { PortfolioMetric } from '@/components/dashboard/uptrade';
+import { TradingDashboard } from '@/components/dashboard/uptrade/trading-dashboard';
+import type { OpenPosition, QuoteInfo, AdvancedChartSeries } from '@/components/dashboard/uptrade';
 
 export const metadata = { title: `USA Forex Market | Dashboard | ${config.site.name}` } satisfies Metadata;
 
-const usdChangeFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 2,
-});
-
-const formatUsdChange = (value: number): string => {
-  const sign = value >= 0 ? '+' : '-';
-  return `${sign}${usdChangeFormatter.format(Math.abs(value))}`;
-};
-
-const portfolioMetrics: PortfolioMetric[] = [
-  { id: 'portfolioValue', label: 'Portfolio value', value: 128400.5, currency: 'USD' },
-  { id: 'availableCash', label: 'Available cash', value: 48210.12, currency: 'USD' },
-  {
-    id: 'dayPnL',
-    label: "Today's P&L",
-    value: 1540.87,
-    formattedValue: formatUsdChange(1540.87),
-  },
-  {
-    id: 'totalPnL',
-    label: 'Total P&L',
-    value: 18450.94,
-    formattedValue: formatUsdChange(18450.94),
-  },
-];
-
-const holdings = [
-  {
-    symbol: 'EUR/USD',
-    name: 'Euro vs US Dollar',
-    quantity: 150000,
-    averageCost: 1.072,
-    currentPrice: 1.078,
-    todayPnLPercent: 0.56,
-  },
-  {
-    symbol: 'USD/JPY',
-    name: 'US Dollar vs Japanese Yen',
-    quantity: 120000,
-    averageCost: 155.42,
-    currentPrice: 154.85,
-    todayPnLPercent: -0.28,
-  },
-  {
-    symbol: 'GBP/USD',
-    name: 'British Pound vs US Dollar',
-    quantity: 90000,
-    averageCost: 1.254,
-    currentPrice: 1.261,
-    todayPnLPercent: 0.35,
-  },
-  {
-    symbol: 'XAU/USD',
-    name: 'Gold Spot',
-    quantity: 250,
-    averageCost: 2368.5,
-    currentPrice: 2382.3,
-    todayPnLPercent: 0.62,
-  },
-];
-
-const watchlistEntries = [
-  { symbol: 'USD/CAD', price: 1.362, changePercent: -0.14 },
-  { symbol: 'AUD/USD', price: 0.662, changePercent: 0.21 },
-  { symbol: 'BTC/USD', price: 68321.45, changePercent: 3.4 },
-];
-
-const chartSeries = [
+const chartSeries: AdvancedChartSeries = [
   {
     name: 'Price',
     data: Array.from({ length: 60 }).map((_, index) => {
@@ -98,54 +19,133 @@ const chartSeries = [
   },
 ];
 
+const openPositions: OpenPosition[] = [
+  {
+    id: 'pos-1',
+    instrument: 'EUR/USD',
+    side: 'BUY',
+    sizeLots: 1.5,
+    openPrice: 1.07215,
+    currentPrice: 1.07842,
+    stopLoss: 1.0665,
+    takeProfit: 1.085,
+    pipPnL: 62.7,
+    currencyPnL: 941.25,
+  },
+  {
+    id: 'pos-2',
+    instrument: 'USD/JPY',
+    side: 'SELL',
+    sizeLots: 2.0,
+    openPrice: 155.28,
+    currentPrice: 154.76,
+    stopLoss: 156.1,
+    takeProfit: 153.9,
+    pipPnL: 52.0,
+    currencyPnL: 954.2,
+  },
+  {
+    id: 'pos-3',
+    instrument: 'XAU/USD',
+    side: 'BUY',
+    sizeLots: 0.4,
+    openPrice: 2368.4,
+    currentPrice: 2385.2,
+    stopLoss: 2342.0,
+    takeProfit: 2408.3,
+    pipPnL: 167.5,
+    currencyPnL: 672.1,
+  },
+];
+
+const watchlistEntries = [
+  { symbol: 'USD/CAD', price: 1.362, changePercent: -0.14 },
+  { symbol: 'AUD/USD', price: 0.662, changePercent: 0.21 },
+  { symbol: 'BTC/USD', price: 68_321.45, changePercent: 3.4 },
+];
+
 const newsArticles = [
   {
     id: 'news-us-1',
     headline: 'Dollar steadies as Fed signals extended higher rates',
     source: 'Bloomberg',
     url: 'https://www.bloomberg.com',
-    publishedAt: new Date(),
+    publishedAt: new Date().toISOString(),
   },
   {
     id: 'news-us-2',
     headline: 'US Treasury yields edge lower ahead of CPI release',
     source: 'WSJ',
     url: 'https://www.wsj.com',
-    publishedAt: new Date(Date.now() - 1000 * 60 * 40),
+    publishedAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
   },
   {
     id: 'news-us-3',
     headline: 'Crude rebounds, buoying commodity-linked FX pairs',
     source: 'Reuters',
     url: 'https://www.reuters.com',
-    publishedAt: new Date(Date.now() - 1000 * 60 * 75),
+    publishedAt: new Date(Date.now() - 1000 * 60 * 75).toISOString(),
   },
 ];
 
+const economicEvents = [
+  {
+    id: 'event-us-1',
+    title: 'FOMC Minutes Release',
+    country: 'United States',
+    impact: 'High' as const,
+    scheduledAt: new Date(Date.now() + 1000 * 60 * 90).toISOString(),
+    description: 'Traders watch for hints on the pace of future rate moves.',
+  },
+  {
+    id: 'event-us-2',
+    title: 'Initial Jobless Claims',
+    country: 'United States',
+    impact: 'Medium' as const,
+    scheduledAt: new Date(Date.now() + 1000 * 60 * 60 * 6).toISOString(),
+    description: 'Consensus expects a slight uptick as seasonal effects fade.',
+  },
+  {
+    id: 'event-us-3',
+    title: 'ECB President Speech',
+    country: 'Eurozone',
+    impact: 'High' as const,
+    scheduledAt: new Date(Date.now() + 1000 * 60 * 60 * 12).toISOString(),
+    description: 'Potential for EUR volatility ahead of policy deliberations.',
+  },
+];
+
+const tradeQuotes: Record<string, QuoteInfo> = {
+  'EUR/USD': { bid: 1.07835, ask: 1.07855, spread: 2 },
+  'GBP/USD': { bid: 1.2621, ask: 1.2624, spread: 3 },
+  'USD/JPY': { bid: 154.81, ask: 154.84, spread: 3 },
+  'XAU/USD': { bid: 2_384.7, ask: 2_385.3, spread: 6 },
+};
+
 export default function Page(): React.JSX.Element {
   return (
-    <>
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12 }}>
-          <PortfolioOverview metrics={portfolioMetrics} lastUpdated={new Date()} />
-        </Grid>
-        <Grid size={{ lg: 8, xs: 12 }}>
-          <AdvancedChart symbol="EUR/USD" series={chartSeries} />
-        </Grid>
-        <Grid size={{ lg: 4, xs: 12 }}>
-          <TradeExecutionWidget defaultSymbol="EUR/USD" />
-        </Grid>
-        <Grid size={{ lg: 8, xs: 12 }}>
-          <HoldingsTable positions={holdings} currency="USD" />
-        </Grid>
-        <Grid size={{ lg: 4, xs: 12 }}>
-          <Watchlist entries={watchlistEntries} currency="USD" />
-        </Grid>
-        <Grid size={{ lg: 4, xs: 12 }}>
-          <MarketNews articles={newsArticles} />
-        </Grid>
-      </Grid>
-      <AiChatbot />
-    </>
+    <TradingDashboard
+      balance={150_240.75}
+      equity={163_540.21}
+      marginUsed={42_810.5}
+      freeMargin={120_729.71}
+      marginLevel={381.95}
+      chartSymbol="EUR/USD"
+      chartSeries={chartSeries}
+      tradeConfig={{
+        defaultSymbol: 'EUR/USD',
+        availableSymbols: Object.keys(tradeQuotes),
+        marketLabel: 'New York FX session',
+        quotes: tradeQuotes,
+      }}
+      openPositions={openPositions}
+      positionsCurrency="USD"
+      economicEvents={economicEvents}
+      calendarHeading="US Economic Calendar"
+      timezoneLabel="EST"
+      watchlistEntries={watchlistEntries}
+      watchlistCurrency="USD"
+      newsArticles={newsArticles}
+    />
   );
 }

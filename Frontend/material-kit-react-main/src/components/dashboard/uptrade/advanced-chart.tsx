@@ -13,6 +13,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 import type { ApexOptions } from 'apexcharts';
 
 import { Chart } from '@/components/core/chart';
+import { useMarketTheme } from '@/contexts/market-theme-context';
 
 const TIMEFRAMES = ['1D', '5D', '1M', '6M', '1Y'] as const;
 
@@ -29,19 +30,49 @@ export interface AdvancedChartProps {
 
 export function AdvancedChart({ symbol, series, initialTimeframe = '1M', sx }: AdvancedChartProps): React.JSX.Element {
   const [timeframe, setTimeframe] = React.useState<Timeframe>(initialTimeframe);
+  const { marketTheme } = useMarketTheme();
 
   const chartOptions = React.useMemo<ApexOptions>(() => {
     return {
       chart: { id: 'advanced-chart', background: 'transparent', toolbar: { show: false } },
-      stroke: { width: 2, curve: 'smooth' },
-      fill: { type: 'gradient', gradient: { shadeIntensity: 0.8, opacityFrom: 0.3, opacityTo: 0.05 } },
-      xaxis: { type: 'datetime', labels: { datetimeUTC: false } },
-      yaxis: { labels: { formatter: (value) => `$${value.toFixed(2)}` } },
-      tooltip: { x: { format: 'MMM dd, yyyy HH:mm' } },
+      colors: [marketTheme.colors.accent],
+      stroke: { width: 2, curve: 'smooth', colors: [marketTheme.colors.accent] },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 0.8,
+          opacityFrom: 0.4,
+          opacityTo: 0.05,
+          stops: [0, 100],
+        },
+        colors: [marketTheme.colors.accent],
+      },
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          datetimeUTC: false,
+          style: { colors: marketTheme.colors.textSecondary },
+        },
+        axisBorder: { color: marketTheme.colors.grid },
+        axisTicks: { color: marketTheme.colors.grid },
+      },
+      yaxis: {
+        labels: {
+          formatter: (value) => `${marketTheme.currency.symbol}${value.toFixed(2)}`,
+          style: { colors: marketTheme.colors.textSecondary },
+        },
+      },
+      tooltip: {
+        x: { format: 'MMM dd, yyyy HH:mm' },
+        theme: 'dark',
+      },
       theme: { mode: 'dark' },
-      grid: { strokeDashArray: 3 },
+      grid: {
+        strokeDashArray: 3,
+        borderColor: marketTheme.colors.grid,
+      },
     } satisfies ApexOptions;
-  }, [timeframe]);
+  }, [marketTheme, timeframe]);
 
   const dataPointCount = React.useMemo(() => {
     const first = Array.isArray(series) ? series[0] : undefined;

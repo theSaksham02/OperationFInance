@@ -1,11 +1,11 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
 import { AuthGuard } from '@/components/auth/auth-guard';
-import { MainNav } from '@/components/dashboard/layout/main-nav';
-import { SideNav } from '@/components/dashboard/layout/side-nav';
+import { MarketThemeProvider } from '@/contexts/market-theme-context';
+import { TradingSidebar } from '@/components/dashboard/layout/trading-sidebar';
+import { TopBar } from '@/components/dashboard/layout/top-bar';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,37 +14,47 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps): React.JSX.Element {
   return (
     <AuthGuard>
-      <GlobalStyles
-        styles={{
-          body: {
-            '--MainNav-height': '56px',
-            '--MainNav-zIndex': 1000,
-            '--SideNav-width': '280px',
-            '--SideNav-zIndex': 1100,
-            '--MobileNav-width': '320px',
-            '--MobileNav-zIndex': 1100,
-          },
-        }}
-      />
-      <Box
-        sx={{
-          bgcolor: 'var(--mui-palette-background-default)',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-          minHeight: '100%',
-        }}
-      >
-        <SideNav />
-        <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', pl: { lg: 'var(--SideNav-width)' } }}>
-          <MainNav />
-          <main>
-            <Container maxWidth="xl" sx={{ py: '64px' }}>
+      <MarketThemeProvider>
+        <GlobalStyles
+          styles={{
+            body: {
+              '--TradingSidebar-expanded': '280px',
+              '--TradingSidebar-collapsed': '64px',
+              '--TopBar-height': '64px',
+            },
+          }}
+        />
+        <Stack
+          direction="row"
+          sx={{
+            bgcolor: 'var(--market-background, #0a1929)',
+            minHeight: '100vh',
+            overflow: 'hidden',
+          }}
+        >
+          <TradingSidebar />
+          <Stack
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'auto',
+            }}
+          >
+            <TopBar />
+            <Stack
+              component="main"
+              sx={{
+                flex: 1,
+                p: 3,
+                bgcolor: 'var(--market-background, #0a1929)',
+                color: 'var(--market-text, #fff)',
+              }}
+            >
               {children}
-            </Container>
-          </main>
-        </Box>
-      </Box>
+            </Stack>
+          </Stack>
+        </Stack>
+      </MarketThemeProvider>
     </AuthGuard>
   );
 }
