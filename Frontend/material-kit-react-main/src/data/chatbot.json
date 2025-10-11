@@ -1,0 +1,14 @@
+[
+  {
+    "question": "How do I place my first trade?",
+    "answer": "Open the Trade Execution widget, enter your ticker and quantity, choose an order type, and submit to run a paper trade."
+  },
+  {
+    "question": "Can I trade Indian stocks?",
+    "answer": "Yes. Use NSE or BSE tickers like RELIANCE.NS or INFY.BO to simulate trades in Indian markets."
+  },
+  {
+    "question": "What is the virtual cash balance?",
+    "answer": "Every Uptrade account starts with $100,000 in simulated cash. Top it up anytime from the Portfolio overview."
+  }
+]
