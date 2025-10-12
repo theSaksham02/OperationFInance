@@ -8,18 +8,29 @@ from .. import crud, models
 from ..services import finnhub
 from ..schemas import Market
 from ..utils.shortable import initial_short_margin_required, maintenance_required, daily_interest_for_short
-from ..security.auth import require_tier, get_current_user
 from ..services import stockgro
 from datetime import datetime
 
 router = APIRouter(prefix="/trade", tags=["trade"])
 
 
+# Mock demo user for no-auth mode
+async def get_demo_user(db: AsyncSession):
+    """Get or create a demo user for testing without authentication"""
+    user = await crud.get_user(db, 1)  # Get first user
+    if not user:
+        # Create a demo user if none exists
+        from ..security.auth import get_password_hash
+        user = await crud.create_user(db, "demo", "demo@uptrade.global", get_password_hash("demo123"))
+    return user
+
+
 
 
 
 @router.post("/buy")
-async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
+    current_user = await get_demo_user(db)
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     # Get price
@@ -50,7 +61,8 @@ async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depend
 
 
 @router.post("/sell")
-async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
+    current_user = await get_demo_user(db)
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:
@@ -82,7 +94,8 @@ async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depen
 
 
 @router.post("/short")
-async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_tier("INTERMEDIATE"))):
+async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
+    current_user = await get_demo_user(db)
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:
@@ -118,7 +131,8 @@ async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depe
 
 
 @router.post("/cover")
-async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_tier("INTERMEDIATE"))):
+async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
+    current_user = await get_demo_user(db)
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:

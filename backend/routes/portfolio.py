@@ -7,7 +7,6 @@ from .. import crud
 from ..schemas import PortfolioSummary, PositionOut, Market
 from ..services.finnhub import get_quote as finnhub_get_quote
 from ..services.stockgro import get_realtime_quote as stockgro_get_quote
-from ..security.auth import get_current_user
 from decimal import Decimal
 from typing import List
 import logging
@@ -15,6 +14,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
+
+
+# Mock demo user for no-auth mode
+async def get_demo_user(db: AsyncSession):
+    """Get or create a demo user for testing without authentication"""
+    user = await crud.get_user(db, 1)  # Get first user
+    if not user:
+        # Create a demo user if none exists
+        from ..security.auth import get_password_hash
+        user = await crud.create_user(db, "demo", "demo@uptrade.global", get_password_hash("demo123"))
+    return user
 
 
 async def _compute_live_values(db: AsyncSession, user) -> PortfolioSummary:
@@ -70,23 +80,27 @@ async def _compute_live_values(db: AsyncSession, user) -> PortfolioSummary:
 
 
 @router.get("", response_model=PortfolioSummary)
-async def get_portfolio(db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)):
-    return await _compute_live_values(db, current_user)
+async def get_portfolio(db: AsyncSession = Depends(get_db)):
+    user = await get_demo_user(db)
+    return await _compute_live_values(db, user)
 
 
 @router.get("/positions", response_model=List[PositionOut])
-async def get_positions(db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)):
-    summary = await _compute_live_values(db, current_user)
+async def get_positions(db: AsyncSession = Depends(get_db)):
+    user = await get_demo_user(db)
+    summary = await _compute_live_values(db, user)
     return summary.positions
 
 
 @router.get("/transactions")
-async def get_transactions(db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user), limit: int = 50, offset: int = 0):
-    txs = await crud.list_transactions(db, current_user, limit=limit, offset=offset)
+async def get_transactions(db: AsyncSession = Depends(get_db), limit: int = 50, offset: int = 0):
+    user = await get_demo_user(db)
+    txs = await crud.list_transactions(db, user, limit=limit, offset=offset)
     return txs
 
 
 @router.get("/equity")
-async def get_equity(db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)):
-    summary = await _compute_live_values(db, current_user)
+async def get_equity(db: AsyncSession = Depends(get_db)):
+    user = await get_demo_user(db)
+    summary = await _compute_live_values(db, user)
     return {"equity": summary.equity, "maintenance_required": summary.maintenance_required, "in_margin_call": summary.in_margin_call, "margin_headroom": summary.margin_headroom}
