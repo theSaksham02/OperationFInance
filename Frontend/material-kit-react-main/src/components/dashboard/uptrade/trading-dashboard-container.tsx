@@ -10,11 +10,10 @@ import Stack from '@mui/material/Stack';
 import { usePortfolioData } from '@/hooks/use-portfolio-data';
 import type { PortfolioPosition } from '@/types/portfolio';
 import { TradingDashboard } from './trading-dashboard';
+import type { TradingDashboardProps } from './trading-dashboard';
 import type { AdvancedChartSeries } from './advanced-chart';
 import type { QuoteInfo } from './trade-execution-widget';
 import type { OpenPosition } from './open-positions-table';
-import type { EconomicEvent } from './economic-calendar';
-import type { MarketNewsArticle } from './market-news';
 import type { DeskVolumeDatum } from '@/components/dashboard/shared/desk-volume-heatmap';
 import type { WatchlistEntry } from './watchlist';
 
@@ -27,8 +26,8 @@ interface MarketPreset {
   fallbackWatchlist: WatchlistEntry[];
   fallbackChartSeries: AdvancedChartSeries;
   fallbackDeskVolume: DeskVolumeDatum[];
-  fallbackNews: MarketNewsArticle[];
-  fallbackEvents: Array<Omit<EconomicEvent, 'scheduledAt'> & { scheduledAt: string }>;
+  fallbackNews: TradingDashboardProps['newsArticles'];
+  fallbackEvents: TradingDashboardProps['economicEvents'];
 }
 
 const MARKET_PRESETS: Record<'usa' | 'india', MarketPreset> = {
