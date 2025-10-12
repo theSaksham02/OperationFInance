@@ -18,9 +18,16 @@ import { useMarketTheme } from '@/contexts/market-theme-context';
 
 export function TopBar(): React.JSX.Element {
   const pathname = usePathname();
-  const { user } = useUser();
   const { marketTheme } = useMarketTheme();
   const [userPopoverAnchor, setUserPopoverAnchor] = React.useState<HTMLElement | null>(null);
+  
+  // Mock user for demo mode
+  const user = { 
+    avatar: null, 
+    name: 'Demo User',
+    username: 'demo',
+    email: 'demo@uptrade.global'
+  };
 
   const pathSegments = pathname.split('/').filter(Boolean);
   const breadcrumbs = pathSegments.slice(1).map((segment, index) => {
@@ -130,13 +137,15 @@ export function TopBar(): React.JSX.Element {
         {/* User avatar */}
         <IconButton onClick={handleUserPopoverOpen} sx={{ p: 0 }}>
           <Avatar
-            src={user?.avatar}
             sx={{
               height: 40,
               width: 40,
               cursor: 'pointer',
+              bgcolor: 'var(--market-accent, #0B6EFD)',
             }}
-          />
+          >
+            D
+          </Avatar>
         </IconButton>
       </Stack>
 

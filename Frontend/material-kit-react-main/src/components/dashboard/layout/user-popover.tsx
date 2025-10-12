@@ -24,30 +24,22 @@ export interface UserPopoverProps {
 }
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
-  const { user, checkSession } = useUser();
-  const primaryLabel = user?.name ?? user?.username ?? 'Signed in';
-
   const router = useRouter();
+  
+  // Mock user for demo mode
+  const user = {
+    name: 'Demo User',
+    username: 'demo',
+    email: 'demo@uptrade.global',
+    tier: 'BEGINNER'
+  };
+  const primaryLabel = user?.name ?? user?.username ?? 'Demo User';
 
   const handleSignOut = React.useCallback(async (): Promise<void> => {
-    try {
-      const { error } = await authClient.signOut();
-
-      if (error) {
-        logger.error('Sign out error', error);
-        return;
-      }
-
-      // Refresh the auth state
-      await checkSession?.();
-
-      // UserProvider, for this case, will not refresh the router and we need to do it manually
-      router.refresh();
-      // After refresh, AuthGuard will handle the redirect
-    } catch (error) {
-      logger.error('Sign out error', error);
-    }
-  }, [checkSession, router]);
+    // Demo mode - just close popover
+    onClose();
+    router.refresh();
+  }, [onClose, router]);
 
   return (
     <Popover
