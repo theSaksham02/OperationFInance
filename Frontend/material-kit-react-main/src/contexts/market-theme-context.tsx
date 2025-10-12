@@ -95,9 +95,16 @@ export function MarketThemeProvider({
   // Apply CSS variables to document root
   React.useEffect(() => {
     const root = document.documentElement;
-    Object.entries(marketTheme.colors).forEach(([key, value]) => {
+    const body = document.body;
+
+    root.classList.remove('mui-light', 'mui-dark');
+    root.classList.add('mui-dark');
+    body.classList.remove('mui-light', 'mui-dark');
+    body.classList.add('mui-dark');
+
+    for (const [key, value] of Object.entries(marketTheme.colors)) {
       root.style.setProperty(`--market-${key}`, value);
-    });
+    }
   }, [marketTheme]);
 
   const formatCurrency = React.useCallback(

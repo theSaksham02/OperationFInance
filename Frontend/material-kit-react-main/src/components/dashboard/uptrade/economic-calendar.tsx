@@ -34,22 +34,38 @@ export interface EconomicCalendarProps {
 
 const impactColor = (impact: EventImpact, palette: Theme['palette']): string => {
   switch (impact) {
-    case 'High':
+    case 'High': {
       return palette.error.main;
-    case 'Medium':
+    }
+    case 'Medium': {
       return palette.warning.main;
-    default:
+    }
+    default: {
       return palette.info.main;
+    }
   }
 };
 
 export function EconomicCalendar({ heading, timezoneLabel, events, sx }: EconomicCalendarProps): React.JSX.Element {
   const theme = useTheme();
 
+  const cardSurfaceSx = {
+    bgcolor: 'rgba(19,47,76,0.92)',
+    border: '1px solid var(--market-border, rgba(255,255,255,0.12))',
+    borderRadius: 3,
+    backdropFilter: 'blur(18px)',
+    boxShadow: '0 20px 60px rgba(1,12,28,0.45)',
+  } as const;
+
   return (
-    <Card component="section" sx={sx}>
-      <CardHeader title={heading} subheader={`Times shown in ${timezoneLabel}`} />
-      <Divider />
+    <Card component="section" sx={{ ...cardSurfaceSx, ...sx }}>
+      <CardHeader
+        title={heading}
+        subheader={`Times shown in ${timezoneLabel}`}
+        titleTypographyProps={{ sx: { color: 'var(--market-text, #ffffff)', fontWeight: 600 } }}
+        subheaderTypographyProps={{ sx: { color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' } }}
+      />
+      <Divider sx={{ borderColor: 'var(--market-border, rgba(255,255,255,0.12))' }} />
       <CardContent sx={{ px: 0 }}>
         <List disablePadding>
           {events.map((event, index) => {
@@ -63,15 +79,15 @@ export function EconomicCalendar({ heading, timezoneLabel, events, sx }: Economi
                     primary={
                       <Grid container spacing={2} alignItems="center">
                         <Grid size={{ xs: 12, sm: 6 }}>
-                          <Typography variant="subtitle1" fontWeight={600} component="div">
+                          <Typography variant="subtitle1" fontWeight={600} component="div" sx={{ color: 'var(--market-text, #ffffff)' }}>
                             {event.title}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" component="div">
+                          <Typography variant="body2" component="div" sx={{ color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' }}>
                             {event.country}
                           </Typography>
                         </Grid>
                         <Grid size={{ xs: 6, sm: 3 }}>
-                          <Typography variant="body2" color="text.secondary" component="div">
+                          <Typography variant="body2" component="div" sx={{ color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' }}>
                             {timeString}
                           </Typography>
                         </Grid>
@@ -90,7 +106,7 @@ export function EconomicCalendar({ heading, timezoneLabel, events, sx }: Economi
                     }
                     secondary={
                       event.description ? (
-                        <Typography variant="body2" color="text.secondary" component="div" sx={{ mt: 1 }}>
+                        <Typography variant="body2" component="div" sx={{ mt: 1, color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' }}>
                           {event.description}
                         </Typography>
                       ) : undefined
@@ -99,12 +115,14 @@ export function EconomicCalendar({ heading, timezoneLabel, events, sx }: Economi
                     secondaryTypographyProps={{ component: 'div' }}
                   />
                 </ListItem>
-                {index < events.length - 1 ? <Divider component="li" sx={{ mx: 3 }} /> : null}
+                {index < events.length - 1 ? (
+                  <Divider component="li" sx={{ mx: 3, borderColor: 'var(--market-border, rgba(255,255,255,0.12))' }} />
+                ) : null}
               </React.Fragment>
             );
           })}
           {events.length === 0 ? (
-            <Typography variant="body2" color="text.secondary" sx={{ px: 3, py: 4 }}>
+            <Typography variant="body2" sx={{ px: 3, py: 4, color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' }}>
               No upcoming events in the calendar.
             </Typography>
           ) : null}

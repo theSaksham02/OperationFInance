@@ -25,7 +25,7 @@ interface RiskMetric {
 }
 
 export default function Page(): React.JSX.Element {
-  const { formatCurrency, marketTheme } = useMarketTheme();
+  const { formatCurrency } = useMarketTheme();
 
   const equity = 112_450;
   const maintenanceRequirement = 28_800;

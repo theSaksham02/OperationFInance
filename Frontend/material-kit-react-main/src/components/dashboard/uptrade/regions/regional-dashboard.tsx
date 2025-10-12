@@ -9,7 +9,7 @@ import type { ThemeOptions } from '@mui/material/styles';
 import { AdvancedChart } from '../advanced-chart';
 import type { AdvancedChartSeries } from '../advanced-chart';
 import { EconomicCalendar } from '../economic-calendar';
-import type { EconomicEvent, EventImpact } from '../economic-calendar';
+import type { EconomicEvent } from '../economic-calendar';
 import { MarketNews } from '../market-news';
 import type { MarketNewsArticle } from '../market-news';
 import { OpenPositionsTable } from '../open-positions-table';

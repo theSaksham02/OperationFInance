@@ -34,26 +34,26 @@ export function PortfolioOverview({ metrics, lastUpdated, sx }: PortfolioOvervie
 
   React.useEffect(() => {
     if (metrics.length === 0) {
-      return undefined;
+      return;
     }
 
     let changedMetric: string | null = null;
-    metrics.forEach((metric) => {
+    for (const metric of metrics) {
       const previousValue = previousValues.current.get(metric.id);
       if (previousValue !== undefined && previousValue !== metric.value && changedMetric === null) {
         changedMetric = metric.id;
       }
       previousValues.current.set(metric.id, metric.value);
-    });
+    }
 
     if (!changedMetric) {
       changedMetric = metrics[0].id;
     }
 
     setHighlighted(changedMetric);
-    const timeoutId = window.setTimeout(() => setHighlighted(null), 1200);
+    const timeoutId = globalThis.setTimeout(() => setHighlighted(null), 1200);
 
-    return () => window.clearTimeout(timeoutId);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [metrics]);
 
   return (

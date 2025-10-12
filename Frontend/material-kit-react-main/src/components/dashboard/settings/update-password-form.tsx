@@ -10,7 +10,7 @@ import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 
 export function UpdatePasswordForm(): React.JSX.Element {
   const [passwords, setPasswords] = React.useState({
@@ -51,46 +51,146 @@ export function UpdatePasswordForm(): React.JSX.Element {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card>
-        <CardHeader subheader="Update your account password" title="Password" />
-        <Divider />
+      <Card
+        sx={{
+          bgcolor: 'rgba(19,47,76,0.92)',
+          border: '1px solid var(--market-border, rgba(255,255,255,0.12))',
+          borderRadius: 3,
+          backdropFilter: 'blur(18px)',
+          boxShadow: '0 20px 60px rgba(1,12,28,0.45)',
+        }}
+      >
+        <CardHeader
+          subheader="Update your account password"
+          title="Password"
+          titleTypographyProps={{ sx: { color: '#ffffff', fontWeight: 600 } }}
+          subheaderTypographyProps={{ sx: { color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' } }}
+        />
+        <Divider sx={{ borderColor: 'var(--market-border, rgba(255,255,255,0.12))' }} />
         <CardContent>
-          <Stack spacing={3} sx={{ maxWidth: 'sm' }}>
-            <FormControl fullWidth required>
-              <InputLabel>Current password</InputLabel>
-              <OutlinedInput
-                label="Current password"
-                name="currentPassword"
-                type="password"
-                value={passwords.currentPassword}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl fullWidth required>
-              <InputLabel>New password</InputLabel>
-              <OutlinedInput
-                label="New password"
-                name="newPassword"
-                type="password"
-                value={passwords.newPassword}
-                onChange={handleChange}
-              />
-            </FormControl>
-            <FormControl fullWidth required>
-              <InputLabel>Confirm new password</InputLabel>
-              <OutlinedInput
-                label="Confirm new password"
-                name="confirmPassword"
-                type="password"
-                value={passwords.confirmPassword}
-                onChange={handleChange}
-              />
-            </FormControl>
-          </Stack>
+          <Grid container spacing={3} sx={{ maxWidth: 520 }}>
+            <Grid size={{ xs: 12 }}>
+              <FormControl
+                fullWidth
+                required
+                sx={{
+                  '& .MuiInputBase-root': {
+                    color: '#ffffff',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                    borderRadius: 2,
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255,255,255,0.65)',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.12)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(11,110,253,0.6)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'var(--market-accent, #0B6EFD)',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: '#ffffff',
+                  },
+                }}
+              >
+                <InputLabel>Current password</InputLabel>
+                <OutlinedInput
+                  label="Current password"
+                  name="currentPassword"
+                  type="password"
+                  value={passwords.currentPassword}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FormControl
+                fullWidth
+                required
+                sx={{
+                  '& .MuiInputBase-root': {
+                    color: '#ffffff',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                    borderRadius: 2,
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255,255,255,0.65)',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.12)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(11,110,253,0.6)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'var(--market-accent, #0B6EFD)',
+                  },
+                }}
+              >
+                <InputLabel>New password</InputLabel>
+                <OutlinedInput
+                  label="New password"
+                  name="newPassword"
+                  type="password"
+                  value={passwords.newPassword}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FormControl
+                fullWidth
+                required
+                sx={{
+                  '& .MuiInputBase-root': {
+                    color: '#ffffff',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                    borderRadius: 2,
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255,255,255,0.65)',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255,255,255,0.12)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(11,110,253,0.6)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'var(--market-accent, #0B6EFD)',
+                  },
+                }}
+              >
+                <InputLabel>Confirm new password</InputLabel>
+                <OutlinedInput
+                  label="Confirm new password"
+                  name="confirmPassword"
+                  type="password"
+                  value={passwords.confirmPassword}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+          </Grid>
         </CardContent>
-        <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained">
+        <Divider sx={{ borderColor: 'var(--market-border, rgba(255,255,255,0.12))' }} />
+        <CardActions sx={{ justifyContent: 'flex-end', px: 3, py: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              bgcolor: 'var(--market-accent, #0B6EFD)',
+              borderRadius: 2,
+              px: 3,
+              py: 1.25,
+              fontWeight: 600,
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'var(--market-accentHover, #0958d9)' },
+            }}
+          >
             Update password
           </Button>
         </CardActions>

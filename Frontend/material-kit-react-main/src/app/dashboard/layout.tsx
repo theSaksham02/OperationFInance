@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
 import { AuthGuard } from '@/components/auth/auth-guard';
@@ -20,40 +20,49 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
             body: {
               '--TradingSidebar-expanded': '280px',
               '--TradingSidebar-collapsed': '64px',
+              '--TradingSidebar-current': '280px',
               '--TopBar-height': '64px',
+              margin: 0,
+              backgroundColor: 'var(--market-background, #0a1929)',
+              color: 'var(--market-text, #fff)',
             },
           }}
         />
-        <Stack
-          direction="row"
+        <TradingSidebar />
+        <Box
           sx={{
-            bgcolor: 'var(--market-background, #0a1929)',
+            display: 'flex',
+            flexDirection: 'column',
             minHeight: '100vh',
-            overflow: 'hidden',
+            ml: 'var(--TradingSidebar-current)',
+            backgroundColor: 'var(--market-background, #0a1929)',
+            color: 'var(--market-text, #fff)',
+            overflowX: 'hidden',
+            transition: 'margin-left 0.2s ease-in-out',
           }}
         >
-          <TradingSidebar />
-          <Stack
+          <TopBar />
+          <Box
+            component="main"
             sx={{
               flex: 1,
-              minWidth: 0,
-              overflow: 'auto',
+              width: '100%',
+              py: 3,
+              px: { xs: 1.5, sm: 2, md: 3 },
+              overflowX: 'hidden',
             }}
           >
-            <TopBar />
-            <Stack
-              component="main"
+            <Box
               sx={{
-                flex: 1,
-                p: 3,
-                bgcolor: 'var(--market-background, #0a1929)',
-                color: 'var(--market-text, #fff)',
+                width: '100%',
+                maxWidth: 1440,
+                mx: 'auto',
               }}
             >
               {children}
-            </Stack>
-          </Stack>
-        </Stack>
+            </Box>
+          </Box>
+        </Box>
       </MarketThemeProvider>
     </AuthGuard>
   );

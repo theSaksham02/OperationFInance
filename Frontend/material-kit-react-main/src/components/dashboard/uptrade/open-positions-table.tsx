@@ -49,12 +49,36 @@ const formatPrice = (value: number): string =>
 
 export function OpenPositionsTable({ positions, currency, title = 'Open Positions', subheader, sx }: OpenPositionsTableProps): React.JSX.Element {
   const theme = useTheme();
+  const cardSurfaceSx = {
+    bgcolor: 'rgba(19,47,76,0.92)',
+    border: '1px solid var(--market-border, rgba(255,255,255,0.12))',
+    borderRadius: 3,
+    backdropFilter: 'blur(18px)',
+    boxShadow: '0 20px 60px rgba(1,12,28,0.45)',
+  } as const;
 
   return (
-    <Card sx={sx} component="section">
-      <CardHeader title={title} subheader={subheader ?? `${positions.length} active ${positions.length === 1 ? 'position' : 'positions'}`} />
+    <Card sx={{ ...cardSurfaceSx, ...sx }} component="section">
+      <CardHeader
+        title={title}
+        subheader={subheader ?? `${positions.length} active ${positions.length === 1 ? 'position' : 'positions'}`}
+        titleTypographyProps={{ sx: { color: 'var(--market-text, #ffffff)', fontWeight: 600 } }}
+        subheaderTypographyProps={{ sx: { color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' } }}
+      />
       <CardContent sx={{ px: 0 }}>
-        <Table size="medium">
+        <Table size="medium" sx={{
+          '& thead th': {
+            color: 'var(--market-textSecondary, rgba(255,255,255,0.7))',
+            fontSize: '0.75rem',
+            textTransform: 'uppercase',
+            letterSpacing: 0.6,
+            borderBottomColor: 'var(--market-border, rgba(255,255,255,0.12))',
+          },
+          '& tbody td': {
+            color: 'var(--market-text, #ffffff)',
+            borderBottomColor: alpha(theme.palette.common.white, 0.08),
+          },
+        }}>
           <TableHead>
             <TableRow>
               <TableCell>Instrument</TableCell>
@@ -100,10 +124,8 @@ export function OpenPositionsTable({ positions, currency, title = 'Open Position
                       }}
                     />
                   </TableCell>
-                  <TableCell align="right">
-                    <Typography component="span" sx={{ fontWeight: 600, color: chipsColor }}>
-                      {`${position.currencyPnL > 0 ? '+' : ''}${formatCurrency(position.currencyPnL, currency)}`}
-                    </Typography>
+                  <TableCell align="right" sx={{ color: chipsColor, fontWeight: 600 }}>
+                    {`${position.currencyPnL > 0 ? '+' : ''}${formatCurrency(position.currencyPnL, currency)}`}
                   </TableCell>
                 </TableRow>
               );
@@ -111,7 +133,7 @@ export function OpenPositionsTable({ positions, currency, title = 'Open Position
           </TableBody>
         </Table>
         {positions.length === 0 && (
-          <Typography variant="body2" color="text.secondary" sx={{ px: 3, py: 4 }}>
+          <Typography variant="body2" sx={{ px: 3, py: 4, color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' }}>
             No open positions. Execute a trade to populate this table.
           </Typography>
         )}

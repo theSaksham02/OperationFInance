@@ -53,15 +53,51 @@ export function AccountDetailsForm(): React.JSX.Element {
     alert('Profile updated successfully!');
   };
 
+  const cardSurfaceSx = {
+    bgcolor: 'rgba(19,47,76,0.92)',
+    border: '1px solid var(--market-border, rgba(255,255,255,0.12))',
+    borderRadius: 3,
+    backdropFilter: 'blur(18px)',
+    boxShadow: '0 20px 60px rgba(1,12,28,0.45)',
+  } as const;
+
+  const formFieldSx = {
+    '& .MuiInputBase-root': {
+      color: '#ffffff',
+      backgroundColor: 'rgba(255,255,255,0.02)',
+      borderRadius: 2,
+    },
+    '& .MuiInputLabel-root': {
+      color: 'rgba(255,255,255,0.65)',
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(255,255,255,0.12)',
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'rgba(11,110,253,0.6)',
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'var(--market-accent, #0B6EFD)',
+    },
+    '& .MuiSvgIcon-root': {
+      color: '#ffffff',
+    },
+  } as const;
+
   return (
     <form onSubmit={handleSubmit}>
-      <Card>
-        <CardHeader subheader="Update your personal information" title="Profile" />
-        <Divider />
+      <Card sx={cardSurfaceSx}>
+        <CardHeader
+          subheader="Update your personal information"
+          title="Profile"
+          titleTypographyProps={{ sx: { color: '#ffffff', fontWeight: 600 } }}
+          subheaderTypographyProps={{ sx: { color: 'var(--market-textSecondary, rgba(255,255,255,0.7))' } }}
+        />
+        <Divider sx={{ borderColor: 'var(--market-border, rgba(255,255,255,0.12))' }} />
         <CardContent>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth required>
+              <FormControl fullWidth required sx={formFieldSx}>
                 <InputLabel>First name</InputLabel>
                 <OutlinedInput
                   label="First name"
@@ -72,7 +108,7 @@ export function AccountDetailsForm(): React.JSX.Element {
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth required>
+              <FormControl fullWidth required sx={formFieldSx}>
                 <InputLabel>Last name</InputLabel>
                 <OutlinedInput
                   label="Last name"
@@ -83,7 +119,7 @@ export function AccountDetailsForm(): React.JSX.Element {
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth required>
+              <FormControl fullWidth required sx={formFieldSx}>
                 <InputLabel>Email address</InputLabel>
                 <OutlinedInput
                   label="Email address"
@@ -95,7 +131,7 @@ export function AccountDetailsForm(): React.JSX.Element {
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={formFieldSx}>
                 <InputLabel>Phone number</InputLabel>
                 <OutlinedInput
                   label="Phone number"
@@ -107,7 +143,7 @@ export function AccountDetailsForm(): React.JSX.Element {
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={formFieldSx}>
                 <InputLabel>Country</InputLabel>
                 <Select
                   label="Country"
@@ -116,7 +152,7 @@ export function AccountDetailsForm(): React.JSX.Element {
                   onChange={(e) => handleChange({ target: { name: 'country', value: e.target.value } })}
                 >
                   {countries.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <MenuItem key={option.value} value={option.value} sx={{ color: '#ffffff' }}>
                       {option.label}
                     </MenuItem>
                   ))}
@@ -124,7 +160,7 @@ export function AccountDetailsForm(): React.JSX.Element {
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={formFieldSx}>
                 <InputLabel>State/Region</InputLabel>
                 <OutlinedInput
                   label="State/Region"
@@ -135,7 +171,7 @@ export function AccountDetailsForm(): React.JSX.Element {
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={formFieldSx}>
                 <InputLabel>City</InputLabel>
                 <OutlinedInput
                   label="City"
@@ -147,9 +183,21 @@ export function AccountDetailsForm(): React.JSX.Element {
             </Grid>
           </Grid>
         </CardContent>
-        <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained">
+        <Divider sx={{ borderColor: 'var(--market-border, rgba(255,255,255,0.12))' }} />
+        <CardActions sx={{ justifyContent: 'flex-end', px: 3, py: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              bgcolor: 'var(--market-accent, #0B6EFD)',
+              borderRadius: 2,
+              px: 3,
+              py: 1.25,
+              fontWeight: 600,
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'var(--market-accentHover, #0958d9)' },
+            }}
+          >
             Save details
           </Button>
         </CardActions>
