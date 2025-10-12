@@ -2,7 +2,7 @@
 
 import type { User } from '@/types/user';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8001';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8001';
 const TOKEN_STORAGE_KEY = 'tradesphere-access-token';
 
 export interface SignUpParams {
@@ -63,15 +63,35 @@ async function parseError(response: Response): Promise<string> {
   return response.statusText || 'Request failed';
 }
 
+function getStorage(): Storage | null {
+  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
+    return null;
+  }
+
+  return window.localStorage;
+}
+
 function getToken(): string | null {
-  return globalThis.localStorage.getItem(TOKEN_STORAGE_KEY);
+  const storage = getStorage();
+
+  if (!storage) {
+    return null;
+  }
+
+  return storage.getItem(TOKEN_STORAGE_KEY);
 }
 
 function setToken(token: string | null): void {
+  const storage = getStorage();
+
+  if (!storage) {
+    return;
+  }
+
   if (token) {
-    globalThis.localStorage.setItem(TOKEN_STORAGE_KEY, token);
+    storage.setItem(TOKEN_STORAGE_KEY, token);
   } else {
-    globalThis.localStorage.removeItem(TOKEN_STORAGE_KEY);
+    storage.removeItem(TOKEN_STORAGE_KEY);
   }
 }
 
@@ -174,3 +194,7 @@ class AuthClient {
 }
 
 export const authClient = new AuthClient();
+
+export function getAccessToken(): string | null {
+  return getToken();
+}
