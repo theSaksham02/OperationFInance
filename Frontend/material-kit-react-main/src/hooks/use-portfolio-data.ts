@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { authClient, getAccessToken, API_BASE_URL } from '@/lib/auth/client';
 import type { PortfolioSummary, PortfolioApiResponse, PortfolioPosition } from '@/types/portfolio';
+import { authorizedFetch, parseErrorResponse, ApiError } from '@/lib/api/http';
 
 interface PortfolioState {
   data: PortfolioSummary | null;
@@ -36,32 +36,6 @@ function mapSummary(payload: PortfolioApiResponse): PortfolioSummary {
   };
 }
 
-async function parseError(response: Response): Promise<string> {
-  try {
-    const body = await response.json();
-
-    if (typeof body?.detail === 'string') {
-      return body.detail;
-    }
-
-    if (Array.isArray(body?.detail) && body.detail.length > 0 && typeof body.detail[0]?.msg === 'string') {
-      return body.detail[0].msg;
-    }
-
-    if (typeof body?.message === 'string') {
-      return body.message;
-    }
-  } catch {
-    // ignore parse errors
-  }
-
-  if (response.status === 401) {
-    return 'Your session has expired. Please sign in again.';
-  }
-
-  return response.statusText || 'Request failed';
-}
-
 export function usePortfolioData(): {
   data: PortfolioSummary | null;
   isLoading: boolean;
@@ -71,28 +45,13 @@ export function usePortfolioData(): {
   const [state, setState] = useState<PortfolioState>({ data: null, isLoading: true, error: null });
 
   const load = useCallback(async () => {
-    const token = getAccessToken();
-
-    if (!token) {
-      setState({ data: null, isLoading: false, error: 'You are not authenticated.' });
-      return;
-    }
-
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await fetch(`${API_BASE_URL}/portfolio`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.status === 401) {
-        await authClient.signOut();
-        setState({ data: null, isLoading: false, error: 'Session expired. Please sign in again.' });
-        return;
-      }
+      const response = await authorizedFetch('/portfolio');
 
       if (!response.ok) {
-        const message = await parseError(response);
+        const message = await parseErrorResponse(response);
         setState({ data: null, isLoading: false, error: message });
         return;
       }
@@ -100,6 +59,11 @@ export function usePortfolioData(): {
       const payload = (await response.json()) as PortfolioApiResponse;
       setState({ data: mapSummary(payload), isLoading: false, error: null });
     } catch (error) {
+      if (error instanceof ApiError) {
+        setState({ data: null, isLoading: false, error: error.message });
+        return;
+      }
+
       console.error(error);
       setState({ data: null, isLoading: false, error: 'Unable to load portfolio data right now.' });
     }

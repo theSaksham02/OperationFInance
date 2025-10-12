@@ -19,3 +19,4 @@ export { RegionalDashboard } from './regions/regional-dashboard';
 export type { RegionalDashboardProps, DashboardVariant } from './regions/regional-dashboard';
 export { TradingDashboard } from './trading-dashboard';
 export type { TradingDashboardProps } from './trading-dashboard';
+export { TransactionsTable } from './transactions-table';
