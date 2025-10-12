@@ -1,0 +1,6 @@
+
+# Local development
+backend/*.db
+backend/*.db.backup
+backend/*.log
+*.log
