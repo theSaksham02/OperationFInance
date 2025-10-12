@@ -1,8 +1,9 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
+const TOKEN_STORAGE_KEY = 'tradesphere-access-token';
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   // Get JWT token from localStorage
-  const token = typeof window !== 'undefined' ? localStorage.getItem('custom-auth-token') : null;
+  const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
   
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

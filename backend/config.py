@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     FINNHUB_API_KEY: str
     STOCKGRO_CLIENT_ID: str
     STOCKGRO_CLIENT_SECRET: str
+    STOCKGRO_TENANT_ID: Optional[str] = None  # Required for Stockgro API
 
     SHORTABLE_MIN_RATE: float = Field(0.02, ge=0)
     SHORTABLE_MAX_RATE: float = Field(0.18, ge=0)

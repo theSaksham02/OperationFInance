@@ -50,7 +50,7 @@ async def me(current_user: models.User = Depends(get_current_user)):
 
 
 @router.put("/upgrade-tier")
-async def upgrade_tier(user_id: str, tier: str, db: AsyncSession = Depends(get_db)):
+async def upgrade_tier(user_id: int, tier: str, db: AsyncSession = Depends(get_db)):
     # Demo-only endpoint. Guard via config in production.
     if not settings.ALLOW_TIER_UPGRADE:
         raise HTTPException(status_code=403, detail="upgrade-tier disabled")

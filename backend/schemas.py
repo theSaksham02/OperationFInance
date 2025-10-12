@@ -23,7 +23,7 @@ class UserCreate(BaseModel):
 
 
 class UserOut(BaseModel):
-    id: str
+    id: int
     username: str
     email: EmailStr
     tier: Tier
@@ -52,7 +52,7 @@ class PositionOut(BaseModel):
 
 
 class TransactionOut(BaseModel):
-    id: str
+    id: int
     symbol: str
     market: Market
     type: str

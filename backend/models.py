@@ -48,11 +48,11 @@ def gen_uuid():
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(String, primary_key=True, default=gen_uuid)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    tier = Column(Enum(TierEnum), default=TierEnum.BEGINNER)
+    tier = Column(Enum(TierEnum, name='user_tier'), default=TierEnum.BEGINNER)
     cash_balance = Column(Numeric(20, 4), default=100000.0)
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.now())
@@ -63,10 +63,10 @@ class User(Base):
 
 class Position(Base):
     __tablename__ = "positions"
-    id = Column(String, primary_key=True, default=gen_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     symbol = Column(String, index=True, nullable=False)
-    market = Column(Enum(MarketEnum), nullable=False)
+    market = Column(Enum(MarketEnum, name='market_type'), nullable=False)
     shares = Column(Numeric(20, 8), nullable=False)
     avg_price = Column(Numeric(20, 8), nullable=False)
     borrow_rate_annual = Column(Float, nullable=True)
@@ -78,11 +78,11 @@ class Position(Base):
 
 class Transaction(Base):
     __tablename__ = "transactions"
-    id = Column(String, primary_key=True, default=gen_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     symbol = Column(String, nullable=False)
-    market = Column(Enum(MarketEnum), nullable=False)
-    type = Column(Enum(TransactionType), nullable=False)
+    market = Column(Enum(MarketEnum, name='market_type'), nullable=False)
+    type = Column(Enum(TransactionType, name='transaction_type'), nullable=False)
     quantity = Column(Numeric(20, 8), nullable=False)
     price = Column(Numeric(20, 8), nullable=False)
     fees = Column(Numeric(20, 8), default=0.0)
@@ -95,7 +95,7 @@ class Transaction(Base):
 class ShortableStock(Base):
     __tablename__ = "shortable_stocks"
     symbol = Column(String, primary_key=True)
-    market = Column(Enum(MarketEnum), nullable=False)
+    market = Column(Enum(MarketEnum, name='market_type'), nullable=False)
     borrow_rate_annual = Column(Float, nullable=False)
     available = Column(Boolean, default=True)
     last_updated = Column(DateTime, server_default=func.now(), onupdate=func.now())
@@ -103,8 +103,8 @@ class ShortableStock(Base):
 
 class EquitySnapshot(Base):
     __tablename__ = "equity_snapshots"
-    id = Column(String, primary_key=True, default=gen_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     total_equity = Column(Numeric(20, 4), nullable=False)
     maintenance_required = Column(Numeric(20, 4), nullable=False)
     created_at = Column(DateTime, server_default=func.now())

@@ -11,7 +11,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import SvgIcon from '@mui/material/SvgIcon';
 
-import { CaretDown } from '@phosphor-icons/react';
+import { CaretDown } from '@/components/core/caret-down-icon';
 
 import { config } from '@/config';
 import { Notifications } from '@/components/dashboard/settings/notifications';

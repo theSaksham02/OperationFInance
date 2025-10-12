@@ -39,10 +39,11 @@ async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depe
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
+        user_id_str: str = payload.get("sub")
+        if user_id_str is None:
             raise credentials_exception
-    except JWTError:
+        user_id = int(user_id_str)  # Convert string to int
+    except (JWTError, ValueError):
         raise credentials_exception
     user = await crud.get_user(db, user_id)
     if user is None:
