@@ -42,27 +42,13 @@ export async function parseErrorResponse(response: Response): Promise<string> {
 }
 
 export async function authorizedFetch(path: string, init: RequestInit = {}): Promise<Response> {
-  const token = getAccessToken();
-
-  if (!token) {
-    throw new ApiError('You are not authenticated.', 401);
-  }
-
+  // Authentication disabled - direct API access
   const headers = new Headers(init.headers ?? undefined);
-
-  if (!headers.has('Authorization')) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers,
   });
-
-  if (response.status === 401) {
-    await authClient.signOut();
-    throw new ApiError('Session expired. Please sign in again.', 401);
-  }
 
   return response;
 }
