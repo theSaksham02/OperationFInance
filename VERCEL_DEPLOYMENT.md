@@ -104,11 +104,15 @@ Since your Next.js app is in a subdirectory, make sure to set:
 Add these to your Vercel project settings:
 
 ```env
-# Backend API URL
-NEXT_PUBLIC_API_URL=https://your-backend-url.com
+# Backend API URL (Required)
+NEXT_PUBLIC_API_BASE_URL=https://your-backend-url.com
 
-# Add any other environment variables your app needs
+# Logging level (Optional)
+NEXT_PUBLIC_LOG_LEVEL=ALL
 ```
+
+**Important**: The frontend expects `NEXT_PUBLIC_API_BASE_URL` (not `NEXT_PUBLIC_API_URL`).
+This is configured in `src/lib/auth/client.ts` as the backend API endpoint.
 
 ### Build Settings
 ```json
@@ -141,21 +145,41 @@ NEXT_PUBLIC_API_URL=https://your-backend-url.com
 6. Add environment variables (DATABASE_URL, SECRET_KEY, etc.)
 7. Deploy!
 
+## Authentication Setup (No-Auth Mode)
+
+**Important**: This application has been configured to work **without authentication**!
+
+- ✅ All users access the same demo account
+- ✅ No login/signup required
+- ✅ Landing page redirects to dashboard
+- ✅ Mock portfolio data ($100k starting balance)
+
+The frontend automatically provides a demo user context, so no authentication backend is needed.
+
 ## Post-Deployment
 
-1. **Custom Domain** (Optional)
+1. **Verify No-Auth Access**
+   - Visit your Vercel URL: `https://your-project.vercel.app`
+   - Landing page should load immediately
+   - Click "Get Started" or "Dashboard" button
+   - Dashboard should load without authentication
+   - Portfolio should show $100,000 mock data
+
+2. **Custom Domain** (Optional)
    - Go to Project Settings → Domains
    - Add your custom domain
    - Update DNS records as instructed
 
-2. **Monitor Deployments**
+3. **Monitor Deployments**
    - View logs in Vercel Dashboard
    - Check deployment status
    - Review build logs for any errors
 
-3. **Update API URL**
-   - Once backend is deployed, update `NEXT_PUBLIC_API_URL` in Vercel
-   - Redeploy if needed
+4. **Update Backend URL**
+   - Once backend is deployed, update `NEXT_PUBLIC_API_BASE_URL` in Vercel
+   - Go to Project Settings → Environment Variables
+   - Update the value
+   - Trigger a new deployment (Deployments → Click "..." → Redeploy)
 
 ## Troubleshooting
 
@@ -171,6 +195,30 @@ NEXT_PUBLIC_API_URL=https://your-backend-url.com
 ### 404 Errors
 - Check that root directory is set correctly
 - Verify build output directory is `.next`
+
+### CORS Errors
+If you see CORS errors in the browser console:
+
+1. **Update Backend CORS Settings**
+   Edit `backend/.env`:
+   ```bash
+   CORS_ORIGINS=https://your-project.vercel.app,http://localhost:3000
+   ```
+
+2. **Or Allow All Origins** (for testing):
+   ```bash
+   CORS_ORIGINS=*
+   ```
+
+3. **Redeploy your backend** after updating CORS settings
+
+### Portfolio Shows "Unable to load portfolio data"
+This means the frontend can't connect to the backend:
+
+1. **Check `NEXT_PUBLIC_API_BASE_URL`** is set correctly in Vercel
+2. **Verify backend is running** - visit `https://your-backend-url/health`
+3. **Check CORS configuration** on backend
+4. **Check browser console** for specific error messages
 
 ## Useful Commands
 
