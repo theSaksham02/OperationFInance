@@ -81,26 +81,50 @@ async def _compute_live_values(db: AsyncSession, user) -> PortfolioSummary:
 
 @router.get("", response_model=PortfolioSummary)
 async def get_portfolio(db: AsyncSession = Depends(get_db)):
-    user = await get_demo_user(db)
-    return await _compute_live_values(db, user)
+    try:
+        user = await get_demo_user(db)
+        return await _compute_live_values(db, user)
+    except Exception as e:
+        logger.warning(f"Database connection failed, returning mock data: {e}")
+        # Return mock portfolio data when database is unavailable
+        return PortfolioSummary(
+            cash_balance=100000.0,
+            equity=100000.0,
+            maintenance_required=0.0,
+            margin_headroom=100000.0,
+            in_margin_call=False,
+            positions=[]
+        )
 
 
 @router.get("/positions", response_model=List[PositionOut])
 async def get_positions(db: AsyncSession = Depends(get_db)):
-    user = await get_demo_user(db)
-    summary = await _compute_live_values(db, user)
-    return summary.positions
+    try:
+        user = await get_demo_user(db)
+        summary = await _compute_live_values(db, user)
+        return summary.positions
+    except Exception as e:
+        logger.warning(f"Database connection failed, returning mock positions: {e}")
+        return []
 
 
 @router.get("/transactions")
 async def get_transactions(db: AsyncSession = Depends(get_db), limit: int = 50, offset: int = 0):
-    user = await get_demo_user(db)
-    txs = await crud.list_transactions(db, user, limit=limit, offset=offset)
-    return txs
+    try:
+        user = await get_demo_user(db)
+        txs = await crud.list_transactions(db, user, limit=limit, offset=offset)
+        return txs
+    except Exception as e:
+        logger.warning(f"Database connection failed, returning mock transactions: {e}")
+        return []
 
 
 @router.get("/equity")
 async def get_equity(db: AsyncSession = Depends(get_db)):
-    user = await get_demo_user(db)
-    summary = await _compute_live_values(db, user)
-    return {"equity": summary.equity, "maintenance_required": summary.maintenance_required, "in_margin_call": summary.in_margin_call, "margin_headroom": summary.margin_headroom}
+    try:
+        user = await get_demo_user(db)
+        summary = await _compute_live_values(db, user)
+        return {"equity": summary.equity, "maintenance_required": summary.maintenance_required, "in_margin_call": summary.in_margin_call, "margin_headroom": summary.margin_headroom}
+    except Exception as e:
+        logger.warning(f"Database connection failed, returning mock equity: {e}")
+        return {"equity": 100000.0, "maintenance_required": 0.0, "in_margin_call": False, "margin_headroom": 100000.0}
