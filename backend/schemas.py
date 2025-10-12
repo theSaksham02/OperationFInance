@@ -30,8 +30,7 @@ class UserOut(BaseModel):
     cash_balance: float
     is_admin: bool
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}
 
 
 class Token(BaseModel):
@@ -49,8 +48,7 @@ class PositionOut(BaseModel):
     current_value: Optional[float]
     unrealized_pnl: Optional[float]
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}
 
 
 class TransactionOut(BaseModel):
@@ -64,8 +62,7 @@ class TransactionOut(BaseModel):
     total_amount: float
     timestamp: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}
 
 
 class PortfolioSummary(BaseModel):
@@ -84,5 +81,4 @@ class ShortableOut(BaseModel):
     borrow_rate_annual: float
     available: bool
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}

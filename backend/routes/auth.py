@@ -31,7 +31,7 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail="email already exists")
     hashed = get_password_hash(payload.password)
     user = await crud.create_user(db, payload.username, payload.email, hashed)
-    return UserOut.from_orm(user)
+    return UserOut.model_validate(user)
 
 
 from fastapi.security import OAuth2PasswordRequestForm
@@ -46,7 +46,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 
 @router.get("/me", response_model=UserOut)
 async def me(current_user: models.User = Depends(get_current_user)):
-    return UserOut.from_orm(current_user)
+    return UserOut.model_validate(current_user)
 
 
 @router.put("/upgrade-tier")
