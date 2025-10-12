@@ -57,7 +57,7 @@ export function LandingHero(): React.JSX.Element {
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
             <Button
               component={Link}
-              href="/auth/sign-up"
+              href="/dashboard/usa"
               size="large"
               variant="contained"
               color="primary"
@@ -67,13 +67,13 @@ export function LandingHero(): React.JSX.Element {
             </Button>
             <Button
               component={Link}
-              href="/auth/sign-in"
+              href="/dashboard/usa"
               size="large"
               variant="outlined"
               color="inherit"
               sx={{ borderRadius: 999, color: 'common.white', borderColor: 'rgba(255,255,255,0.6)' }}
             >
-              Already on UpTrade?
+              Go to Dashboard
             </Button>
           </Stack>
         </Stack>

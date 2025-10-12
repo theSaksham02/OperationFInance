@@ -70,16 +70,16 @@ export function LandingHeader(): React.JSX.Element {
           <Stack direction="row" spacing={1.5} alignItems="center">
             <Button
               component={Link}
-              href="/auth/sign-in"
+              href="/dashboard/usa"
               variant="text"
               color="inherit"
               sx={{ color: 'rgba(255,255,255,0.78)' }}
             >
-              Log In
+              Dashboard
             </Button>
             <Button
               component={Link}
-              href="/auth/sign-up"
+              href="/dashboard/usa"
               variant="contained"
               sx={{
                 borderRadius: 999,

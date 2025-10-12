@@ -27,7 +27,7 @@ export function LandingFinalCTA(): React.JSX.Element {
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
             <Button
               component={Link}
-              href="/auth/sign-up"
+              href="/dashboard/usa"
               size="large"
               variant="contained"
               sx={{
@@ -46,7 +46,7 @@ export function LandingFinalCTA(): React.JSX.Element {
             </Button>
             <Button
               component={Link}
-              href="/dashboard"
+              href="/dashboard/usa"
               size="large"
               variant="outlined"
               sx={{
