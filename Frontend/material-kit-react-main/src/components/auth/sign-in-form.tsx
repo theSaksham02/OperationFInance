@@ -138,7 +138,7 @@ export function SignInForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="info">Use your TradeSphere credentials to access the dashboard.</Alert>
+      <Alert color="info">Use your Uptrade Global credentials to access the dashboard.</Alert>
     </Stack>
   );
 }

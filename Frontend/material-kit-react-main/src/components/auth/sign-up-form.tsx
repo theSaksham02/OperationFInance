@@ -137,7 +137,7 @@ export function SignUpForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="info">Your account will be created on the TradeSphere backend.</Alert>
+      <Alert color="info">Your account will be created on Uptrade Global. Start trading in US & Indian markets!</Alert>
     </Stack>
   );
 }
