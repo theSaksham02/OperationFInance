@@ -32,14 +32,14 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
 
       if (error) {
         logger.error(error);
-        setState((prev) => ({ ...prev, user: null, error: 'Something went wrong', isLoading: false }));
+        setState((prev) => ({ ...prev, user: null, error, isLoading: false }));
         return;
       }
 
       setState((prev) => ({ ...prev, user: data ?? null, error: null, isLoading: false }));
     } catch (error) {
       logger.error(error);
-      setState((prev) => ({ ...prev, user: null, error: 'Something went wrong', isLoading: false }));
+      setState((prev) => ({ ...prev, user: null, error: 'Unable to load session', isLoading: false }));
     }
   }, []);
 

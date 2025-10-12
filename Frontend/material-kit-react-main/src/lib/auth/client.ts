@@ -2,23 +2,11 @@
 
 import type { User } from '@/types/user';
 
-function generateToken(): string {
-  const arr = new Uint8Array(12);
-  globalThis.crypto.getRandomValues(arr);
-  return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
-}
-
-const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
-  firstName: 'Sofia',
-  lastName: 'Rivers',
-  email: 'sofia@devias.io',
-} satisfies User;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8001';
+const TOKEN_STORAGE_KEY = 'tradesphere-access-token';
 
 export interface SignUpParams {
-  firstName: string;
-  lastName: string;
+  username: string;
   email: string;
   password: string;
 }
@@ -28,7 +16,7 @@ export interface SignInWithOAuthParams {
 }
 
 export interface SignInWithPasswordParams {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -36,15 +24,76 @@ export interface ResetPasswordParams {
   email: string;
 }
 
+function mapUser(payload: Record<string, unknown>): User {
+  return {
+    id: String(payload.id ?? ''),
+    username: String(payload.username ?? ''),
+    email: String(payload.email ?? ''),
+    tier: (payload.tier as User['tier']) ?? 'BEGINNER',
+    cashBalance: Number(payload.cash_balance ?? payload.cashBalance ?? 0),
+    isAdmin: Boolean(payload.is_admin ?? payload.isAdmin ?? false),
+    avatar: (payload.avatar as string | undefined | null) ?? null,
+    name: (payload.name as string | undefined | null) ?? String(payload.username ?? ''),
+  };
+}
+
+async function parseError(response: Response): Promise<string> {
+  try {
+    const body = await response.json();
+
+    if (typeof body?.detail === 'string') {
+      return body.detail;
+    }
+
+    if (Array.isArray(body?.detail) && body.detail.length > 0 && typeof body.detail[0]?.msg === 'string') {
+      return body.detail[0].msg;
+    }
+
+    if (typeof body?.message === 'string') {
+      return body.message;
+    }
+  } catch {
+    // ignore parsing failures
+  }
+
+  if (response.status === 401) {
+    return 'Invalid credentials';
+  }
+
+  return response.statusText || 'Request failed';
+}
+
+function getToken(): string | null {
+  return globalThis.localStorage.getItem(TOKEN_STORAGE_KEY);
+}
+
+function setToken(token: string | null): void {
+  if (token) {
+    globalThis.localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  } else {
+    globalThis.localStorage.removeItem(TOKEN_STORAGE_KEY);
+  }
+}
+
 class AuthClient {
-  async signUp(_: SignUpParams): Promise<{ error?: string }> {
-    // Make API request
+  async signUp(params: SignUpParams): Promise<{ error?: string }> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: params.username, email: params.email, password: params.password }),
+      });
 
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
+      if (!response.ok) {
+        return { error: await parseError(response) };
+      }
 
-    return {};
+      // Automatically sign-in after registration for convenience.
+      return this.signInWithPassword({ username: params.username, password: params.password });
+    } catch (error) {
+      console.error(error);
+      return { error: 'Unable to register right now. Please try again.' };
+    }
   }
 
   async signInWithOAuth(_: SignInWithOAuthParams): Promise<{ error?: string }> {
@@ -52,19 +101,33 @@ class AuthClient {
   }
 
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
-    const { email, password } = params;
+    const body = new URLSearchParams();
+    body.set('username', params.username);
+    body.set('password', params.password);
 
-    // Make API request
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      });
 
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
+      if (!response.ok) {
+        return { error: await parseError(response) };
+      }
+
+      const payload = (await response.json()) as { access_token: string };
+
+      if (!payload?.access_token) {
+        return { error: 'Authentication response missing access token' };
+      }
+
+      setToken(payload.access_token);
+      return {};
+    } catch (error) {
+      console.error(error);
+      return { error: 'Unable to sign in right now. Please try again.' };
     }
-
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
-    return {};
   }
 
   async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {
@@ -76,21 +139,36 @@ class AuthClient {
   }
 
   async getUser(): Promise<{ data?: User | null; error?: string }> {
-    // Make API request
-
-    // We do not handle the API, so just check if we have a token in localStorage.
-    const token = localStorage.getItem('custom-auth-token');
+    const token = getToken();
 
     if (!token) {
       return { data: null };
     }
 
-    return { data: user };
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 401) {
+        setToken(null);
+        return { data: null };
+      }
+
+      if (!response.ok) {
+        return { error: await parseError(response) };
+      }
+
+      const payload = (await response.json()) as Record<string, unknown>;
+      return { data: mapUser(payload) };
+    } catch (error) {
+      console.error(error);
+      return { error: 'Unable to verify session. Please try again.' };
+    }
   }
 
   async signOut(): Promise<{ error?: string }> {
-    localStorage.removeItem('custom-auth-token');
-
+    setToken(null);
     return {};
   }
 }

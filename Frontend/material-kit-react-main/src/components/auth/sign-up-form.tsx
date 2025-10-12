@@ -6,9 +6,7 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
 import Link from '@mui/material/Link';
@@ -22,17 +20,21 @@ import { paths } from '@/paths';
 import { authClient } from '@/lib/auth/client';
 import { useUser } from '@/hooks/use-user';
 
-const schema = zod.object({
-  firstName: zod.string().min(1, { message: 'First name is required' }),
-  lastName: zod.string().min(1, { message: 'Last name is required' }),
-  email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
-  terms: zod.boolean().refine((value) => value, 'You must accept the terms and conditions'),
-});
+const schema = zod
+  .object({
+    username: zod.string().min(1, { message: 'Username is required' }),
+    email: zod.string().min(1, { message: 'Email is required' }).email(),
+    password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
+    confirmPassword: zod.string().min(6, { message: 'Password confirmation is required' }),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: 'Passwords must match',
+    path: ['confirmPassword'],
+  });
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { firstName: '', lastName: '', email: '', password: '', terms: false } satisfies Values;
+const defaultValues: Values = { username: '', email: '', password: '', confirmPassword: '' };
 
 export function SignUpForm(): React.JSX.Element {
   const router = useRouter();
@@ -52,7 +54,9 @@ export function SignUpForm(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const { error } = await authClient.signUp(values);
+  const { username, email, password } = values;
+
+  const { error } = await authClient.signUp({ username, email, password });
 
       if (error) {
         setError('root', { type: 'server', message: error });
@@ -85,23 +89,12 @@ export function SignUpForm(): React.JSX.Element {
         <Stack spacing={2}>
           <Controller
             control={control}
-            name="firstName"
+            name="username"
             render={({ field }) => (
-              <FormControl error={Boolean(errors.firstName)}>
-                <InputLabel>First name</InputLabel>
-                <OutlinedInput {...field} label="First name" />
-                {errors.firstName ? <FormHelperText>{errors.firstName.message}</FormHelperText> : null}
-              </FormControl>
-            )}
-          />
-          <Controller
-            control={control}
-            name="lastName"
-            render={({ field }) => (
-              <FormControl error={Boolean(errors.firstName)}>
-                <InputLabel>Last name</InputLabel>
-                <OutlinedInput {...field} label="Last name" />
-                {errors.firstName ? <FormHelperText>{errors.firstName.message}</FormHelperText> : null}
+              <FormControl error={Boolean(errors.username)}>
+                <InputLabel>Username</InputLabel>
+                <OutlinedInput {...field} label="Username" />
+                {errors.username ? <FormHelperText>{errors.username.message}</FormHelperText> : null}
               </FormControl>
             )}
           />
@@ -129,19 +122,13 @@ export function SignUpForm(): React.JSX.Element {
           />
           <Controller
             control={control}
-            name="terms"
+            name="confirmPassword"
             render={({ field }) => (
-              <div>
-                <FormControlLabel
-                  control={<Checkbox {...field} />}
-                  label={
-                    <React.Fragment>
-                      I have read the <Link>terms and conditions</Link>
-                    </React.Fragment>
-                  }
-                />
-                {errors.terms ? <FormHelperText error>{errors.terms.message}</FormHelperText> : null}
-              </div>
+              <FormControl error={Boolean(errors.confirmPassword)}>
+                <InputLabel>Confirm password</InputLabel>
+                <OutlinedInput {...field} label="Confirm password" type="password" />
+                {errors.confirmPassword ? <FormHelperText>{errors.confirmPassword.message}</FormHelperText> : null}
+              </FormControl>
             )}
           />
           {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
@@ -150,7 +137,7 @@ export function SignUpForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">Created users are not persisted</Alert>
+      <Alert color="info">Your account will be created on the TradeSphere backend.</Alert>
     </Stack>
   );
 }

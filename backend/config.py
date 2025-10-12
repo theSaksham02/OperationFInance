@@ -9,7 +9,8 @@ Environment variables expected (example .env):
 # STOCKGRO_CLIENT_SECRET=supersecret
 # CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 """
-from pydantic import BaseSettings, Field, AnyHttpUrl
+from pydantic import Field
+from pydantic_settings import BaseSettings
 from typing import List, Optional
 
 
