@@ -15,7 +15,13 @@ import {
 
 export default function Page(): React.JSX.Element {
   return (
-    <Box sx={{ backgroundColor: 'background.default', color: 'text.primary', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        background: 'linear-gradient(180deg, #04070F 0%, #050310 55%, #03020A 100%)',
+        color: 'common.white',
+        minHeight: '100vh',
+      }}
+    >
       <LandingHeader />
       <main>
         <LandingHero />

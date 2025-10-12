@@ -10,10 +10,11 @@ import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 
 export interface PortfolioMetric {
-  id: 'portfolioValue' | 'availableCash' | 'dayPnL' | 'totalPnL';
+  id: string;
   label: string;
   value: number;
   currency?: string;
+  formattedValue?: string;
   formatter?: (value: number) => string;
 }
 
@@ -33,41 +34,42 @@ export function PortfolioOverview({ metrics, lastUpdated, sx }: PortfolioOvervie
 
   React.useEffect(() => {
     if (metrics.length === 0) {
-      return undefined;
+      return;
     }
 
     let changedMetric: string | null = null;
-    metrics.forEach((metric) => {
+    for (const metric of metrics) {
       const previousValue = previousValues.current.get(metric.id);
       if (previousValue !== undefined && previousValue !== metric.value && changedMetric === null) {
         changedMetric = metric.id;
       }
       previousValues.current.set(metric.id, metric.value);
-    });
+    }
 
     if (!changedMetric) {
       changedMetric = metrics[0].id;
     }
 
     setHighlighted(changedMetric);
-    const timeoutId = window.setTimeout(() => setHighlighted(null), 1200);
+    const timeoutId = globalThis.setTimeout(() => setHighlighted(null), 1200);
 
-    return () => window.clearTimeout(timeoutId);
+    return () => globalThis.clearTimeout(timeoutId);
   }, [metrics]);
 
   return (
     <Grid container spacing={3} sx={sx}>
       {metrics.map((metric) => {
-        const formatter = metric.formatter ?? DEFAULT_FORMATTER;
         const isNegative = metric.value < 0;
         const showCurrency = Boolean(metric.currency);
-        const formattedValue = showCurrency
-          ? metric.value.toLocaleString(undefined, {
-              style: 'currency',
-              currency: metric.currency,
-              maximumFractionDigits: 2,
-            })
-          : formatter(metric.value);
+        const formattedValue =
+          metric.formattedValue ??
+          (showCurrency
+            ? metric.value.toLocaleString(undefined, {
+                style: 'currency',
+                currency: metric.currency,
+                maximumFractionDigits: 2,
+              })
+            : (metric.formatter ?? DEFAULT_FORMATTER)(metric.value));
 
         return (
           <Grid key={metric.id} size={{ xs: 12, sm: 6, lg: 3 }}>

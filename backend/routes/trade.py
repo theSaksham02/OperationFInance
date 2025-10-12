@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from decimal import Decimal
+from typing import Optional
 from ..database import get_db
 from .. import crud, models
 from ..services import finnhub
@@ -152,7 +153,7 @@ async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depe
 
 
 @router.get("/shortable")
-async def shortable_list(db: AsyncSession = Depends(get_db), market: Market | None = None):
+async def shortable_list(db: AsyncSession = Depends(get_db), market: Optional[Market] = None):
     m = None
     if market:
         m = market
