@@ -67,7 +67,7 @@ export function LandingTicker(): React.JSX.Element {
     >
       <Container maxWidth={false} disableGutters sx={{ maxWidth: 'none' }}>
         <Box
-          sx={(theme) => ({
+          sx={() => ({
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             py: 2.5,

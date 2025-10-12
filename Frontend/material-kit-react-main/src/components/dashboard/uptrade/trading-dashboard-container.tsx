@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/numeric-separators-style */
 'use client';
 
 import * as React from 'react';
@@ -268,20 +269,20 @@ export function TradingDashboardContainer({ market }: TradingDashboardContainerP
   const openPositions = React.useMemo(() => mapToOpenPositions(data?.positions ?? []), [data?.positions]);
 
   const watchlistEntries = React.useMemo<WatchlistEntry[]>(() => {
-    if (!data?.positions?.length) {
-      return preset.fallbackWatchlist;
+    if (data?.positions && data.positions.length > 0) {
+      return data.positions.map((position) => {
+        const price = position.currentPrice ?? position.avgPrice;
+        const changePercent = position.avgPrice ? ((price - position.avgPrice) / position.avgPrice) * 100 : 0;
+
+        return {
+          symbol: position.symbol,
+          price: Number(price.toFixed(4)),
+          changePercent: Number(changePercent.toFixed(2)),
+        };
+      });
     }
 
-    return data.positions.map((position) => {
-      const price = position.currentPrice ?? position.avgPrice;
-      const changePercent = position.avgPrice ? ((price - position.avgPrice) / position.avgPrice) * 100 : 0;
-
-      return {
-        symbol: position.symbol,
-        price: Number(price.toFixed(4)),
-        changePercent: Number(changePercent.toFixed(2)),
-      };
-    });
+    return preset.fallbackWatchlist;
   }, [data?.positions, preset.fallbackWatchlist]);
 
   const quotes = React.useMemo(() => {
@@ -290,19 +291,19 @@ export function TradingDashboardContainer({ market }: TradingDashboardContainerP
   }, [watchlistEntries, preset.fallbackWatchlist]);
 
   const chartSeries = React.useMemo<AdvancedChartSeries>(() => {
-    if (!data) {
-      return preset.fallbackChartSeries;
+    if (data) {
+      return buildChartSeries(data.equity);
     }
 
-    return buildChartSeries(data.equity);
+    return preset.fallbackChartSeries;
   }, [data, preset.fallbackChartSeries]);
 
   const totalPnl = React.useMemo(() => {
-    if (!data) {
-      return 0;
+    if (data) {
+      return data.positions.reduce((acc, position) => acc + (position.unrealizedPnl ?? 0), 0);
     }
 
-    return data.positions.reduce((acc, position) => acc + (position.unrealizedPnl ?? 0), 0);
+    return 0;
   }, [data]);
 
   const currencyFormatter = React.useMemo(
@@ -331,7 +332,7 @@ export function TradingDashboardContainer({ market }: TradingDashboardContainerP
     );
   }
 
-  if (error || !data) {
+  if (error || data === null) {
     return (
       <Stack spacing={2} sx={{ maxWidth: 520, mx: 'auto', mt: 6 }}>
         <Alert severity="error">{error ?? 'Unable to load portfolio data.'}</Alert>

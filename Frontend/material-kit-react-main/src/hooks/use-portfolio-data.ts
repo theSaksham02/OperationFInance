@@ -32,7 +32,7 @@ function mapSummary(payload: PortfolioApiResponse): PortfolioSummary {
     maintenanceRate: payload.maintenance_rate,
     marginHeadroom: payload.margin_headroom,
     inMarginCall: payload.in_margin_call,
-    positions: payload.positions.map(mapPosition),
+    positions: payload.positions.map((position) => mapPosition(position)),
   };
 }
 

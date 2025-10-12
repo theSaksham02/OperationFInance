@@ -64,11 +64,14 @@ async function parseError(response: Response): Promise<string> {
 }
 
 function getStorage(): Storage | null {
-  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
+  const globalWithWindow = globalThis as typeof globalThis & { window?: Window };
+  const win = globalWithWindow.window;
+
+  if (!win || win.localStorage === undefined) {
     return null;
   }
 
-  return window.localStorage;
+  return win.localStorage;
 }
 
 function getToken(): string | null {

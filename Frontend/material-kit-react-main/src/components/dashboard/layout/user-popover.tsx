@@ -25,6 +25,7 @@ export interface UserPopoverProps {
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
   const { user, checkSession } = useUser();
+  const primaryLabel = user?.name ?? user?.username ?? 'Signed in';
 
   const router = useRouter();
 
@@ -57,10 +58,15 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
       <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">{user?.username ?? 'Unknown user'}</Typography>
+        <Typography variant="subtitle1">{primaryLabel}</Typography>
         <Typography color="text.secondary" variant="body2">
           {user?.email ?? 'No email on file'}
         </Typography>
+        {user?.tier ? (
+          <Typography color="text.secondary" variant="caption" sx={{ display: 'block', mt: 0.5 }}>
+            Tier: {user.tier}
+          </Typography>
+        ) : null}
       </Box>
       <Divider />
       <MenuList disablePadding sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}>

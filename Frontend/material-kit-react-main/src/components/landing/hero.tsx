@@ -39,7 +39,7 @@ export function LandingHero(): React.JSX.Element {
         }}
       />
       <Box
-        sx={(theme) => ({
+        sx={() => ({
           position: 'absolute',
           inset: 0,
           background: `linear-gradient(145deg, rgba(15, 27, 45, ${HERO_BG_OPACITY + 0.05}), rgba(19, 78, 72, ${HERO_BG_OPACITY}))`,
