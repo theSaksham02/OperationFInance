@@ -102,7 +102,7 @@ curl http://localhost:8000/portfolio/equity
 5. Portfolio should show $100,000 (not "Unable to load portfolio data")
 
 ## 🐛 Troubleshooting "Unable to load portfolio data"
-
+## 
 If frontend still shows this error:
 
 ### 1. Hard Refresh Browser
