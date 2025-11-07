@@ -6,11 +6,28 @@ from ..database import get_db
 from .. import crud, models
 from ..schemas import PortfolioSummary, PositionOut
 from ..services.finnhub import get_quote
-from ..security.auth import get_current_user
 from decimal import Decimal
 from typing import List
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
+
+
+# Mock user function to bypass authentication
+async def get_mock_user(db: AsyncSession = Depends(get_db)):
+    """Get or create a default demo user."""
+    user = await crud.get_user_by_email(db, "demo@tradesphere.com")
+    if not user:
+        # Create default demo user
+        user = models.User(
+            email="demo@tradesphere.com",
+            hashed_password="demo",
+            cash_balance=100000.0,
+            tier="BASIC"
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+    return user
 
 
 async def _compute_live_values(db: AsyncSession, user) -> PortfolioSummary:
@@ -46,11 +63,11 @@ async def _compute_live_values(db: AsyncSession, user) -> PortfolioSummary:
 
 
 @router.get("", response_model=PortfolioSummary)
-async def get_portfolio(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def get_portfolio(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     return await _compute_live_values(db, current_user)
 
 
 @router.get("/positions", response_model=List[PositionOut])
-async def get_positions(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def get_positions(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     positions = await crud.list_positions(db, current_user)
     return [PositionOut.from_orm(p) for p in positions]

@@ -9,7 +9,6 @@ from .. import crud, models
 from ..services import finnhub
 from ..schemas import Market
 from ..utils.shortable import initial_short_margin_required, maintenance_required, daily_interest_for_short
-from ..security.auth import require_tier, get_current_user
 from ..services import stockgro
 from datetime import datetime
 
@@ -17,12 +16,30 @@ from datetime import datetime
 router = APIRouter(prefix="/trade", tags=["trade"])
 
 
+# Mock user function to bypass authentication
+async def get_mock_user(db: AsyncSession = Depends(get_db)):
+    """Get or create a default demo user."""
+    user = await crud.get_user_by_email(db, "demo@tradesphere.com")
+    if not user:
+        # Create default demo user
+        user = models.User(
+            email="demo@tradesphere.com",
+            hashed_password="demo",
+            cash_balance=100000.0,
+            tier="INTERMEDIATE"  # Give intermediate tier for shorting
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+    return user
+
+
 
 from backend.services.alpaca import place_order, get_portfolio
 from fastapi.responses import JSONResponse
 
 @router.post("/buy")
-async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     # Get price
