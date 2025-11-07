@@ -27,7 +27,7 @@ This module wires routers, CORS, structured logging, and health checks.
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import auth, portfolio, trade, admin
+from .routes import auth, portfolio, trade, admin, analytics, market
 from .config import settings
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -51,6 +51,8 @@ app.include_router(auth.router)
 app.include_router(portfolio.router)
 app.include_router(trade.router)
 app.include_router(admin.router)
+app.include_router(analytics.router)
+app.include_router(market.router)
 
 
 @app.get("/health")
