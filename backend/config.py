@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     STOCKGRO_CLIENT_SECRET: str
     stockgro_tenant_id: str = ""
 
+    # Alpaca Paper Trading API
+    ALPACA_API_KEY: str = ""
+    ALPACA_API_SECRET: str = ""
+
     SHORTABLE_MIN_RATE: float = Field(0.02, ge=0)
     SHORTABLE_MAX_RATE: float = Field(0.18, ge=0)
     SHORTABLE_SELECTION_COUNT: int = 100

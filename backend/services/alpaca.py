@@ -2,20 +2,28 @@
 Alpaca Paper Trading Service
 Integrates with Alpaca's paper trading API for order simulation and portfolio management.
 """
-import os
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import MarketOrderRequest
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.models import Order
+from ..config import settings
 
-API_KEY = os.getenv("ALPACA_API_KEY")
-API_SECRET = os.getenv("ALPACA_API_SECRET")
+_trading_client = None
 
-# Set paper=True for paper trading
-trading_client = TradingClient(API_KEY, API_SECRET, paper=True)
+def get_trading_client():
+    """Get or create the Alpaca trading client."""
+    global _trading_client
+    if _trading_client is None:
+        _trading_client = TradingClient(
+            settings.ALPACA_API_KEY,
+            settings.ALPACA_API_SECRET,
+            paper=True
+        )
+    return _trading_client
 
 def place_order(symbol: str, qty: int, side: str):
     """Place a market order using Alpaca paper trading API."""
+    trading_client = get_trading_client()
     order_data = MarketOrderRequest(
         symbol=symbol,
         qty=qty,
@@ -27,6 +35,7 @@ def place_order(symbol: str, qty: int, side: str):
 
 def get_portfolio():
     """Fetch current portfolio positions from Alpaca paper trading account."""
+    trading_client = get_trading_client()
     positions = trading_client.get_all_positions()
     return positions
 
