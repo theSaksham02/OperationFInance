@@ -46,6 +46,7 @@ async def get_quote(symbol: str) -> dict:
     key = f"quote:{symbol}"
 
     async def fetch():
+<<<<<<< HEAD
         # If API key is placeholder, return mock data
         if settings.FINNHUB_API_KEY == "your_finnhub_api_key" or not settings.FINNHUB_API_KEY:
             logger.warning("Using mock Finnhub data - no valid API key configured")
@@ -83,6 +84,11 @@ async def get_quote(symbol: str) -> dict:
                 "pc": 99.0,
                 "t": int(time())
             }
+=======
+        url = "https://finnhub.io/api/v1/quote"
+        params = {"symbol": symbol, "token": settings.FINNHUB_API_KEY}
+        return await _get(url, params)
+>>>>>>> MK
 
     return await _cached_get(key, settings.QUOTE_CACHE_TTL_SECONDS, fetch)
 
