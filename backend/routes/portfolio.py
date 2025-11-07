@@ -20,9 +20,9 @@ async def get_mock_user(db: AsyncSession = Depends(get_db)):
         # Create default demo user
         user = models.User(
             email="demo@tradesphere.com",
-            hashed_password="demo",
+            password_hash="demo",
             cash_balance=100000.0,
-            tier="BASIC"
+            tier="BEGINNER"
         )
         db.add(user)
         await db.commit()

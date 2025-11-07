@@ -9,13 +9,31 @@ from .. import crud, models
 from ..database import get_db
 from ..schemas import UserCreate, UserOut, Token
 from ..security.auth import (
-    get_password_hash, verify_password, create_access_token, get_current_user
+    get_password_hash, verify_password, create_access_token
 )
 from ..config import settings
 from typing import Dict
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+# Mock user function to bypass authentication
+async def get_mock_user(db: AsyncSession = Depends(get_db)):
+    """Get or create a default demo user."""
+    user = await crud.get_user_by_email(db, "demo@tradesphere.com")
+    if not user:
+        # Create default demo user
+        user = models.User(
+            email="demo@tradesphere.com",
+            password_hash="demo",
+            cash_balance=100000.0,
+            tier="INTERMEDIATE"
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+    return user
 
 
 
@@ -45,7 +63,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 
 
 @router.get("/me", response_model=UserOut)
-async def me(current_user: models.User = Depends(get_current_user)):
+async def me(current_user: models.User = Depends(get_mock_user)):
     return UserOut.from_orm(current_user)
 
 

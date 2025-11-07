@@ -8,12 +8,29 @@ from ..utils.shortable import generate_shortable_symbols, daily_interest_for_sho
 
 from ..config import settings
 from decimal import Decimal
-from ..security.auth import require_admin
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
-async def refresh_shortable(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
+# Mock user function to bypass authentication
+async def get_mock_user(db: AsyncSession = Depends(get_db)):
+    """Get or create a default demo user."""
+    user = await crud.get_user_by_email(db, "demo@tradesphere.com")
+    if not user:
+        # Create default demo user
+        user = models.User(
+            email="demo@tradesphere.com",
+            password_hash="demo",
+            cash_balance=100000.0,
+            tier="INTERMEDIATE"
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+    return user
+
+
+async def refresh_shortable(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     # Use Finnhub and StockGro to get symbol universe
     us_symbols = []
     try:
@@ -42,14 +59,14 @@ async def refresh_shortable(db: AsyncSession = Depends(get_db), current_user: mo
 
 
 @router.get("/users")
-async def list_users(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
+async def list_users(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     q = await db.execute(models.select(models.User))
     users = q.scalars().all()
     return users
 
 
 @router.put("/user-tier")
-async def change_tier(user_id: str, tier: str, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
+async def change_tier(user_id: str, tier: str, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     user = await crud.get_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
@@ -64,7 +81,7 @@ async def change_tier(user_id: str, tier: str, db: AsyncSession = Depends(get_db
 
 
 @router.post("/simulate-daily-interest")
-async def simulate_daily_interest(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
+async def simulate_daily_interest(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     # Apply one day's interest to all short positions
     q = await db.execute(models.select(models.Position).where(models.Position.shares < 0))
     positions = q.scalars().all()

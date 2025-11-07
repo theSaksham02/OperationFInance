@@ -17,7 +17,6 @@ from sqlalchemy import (
     Numeric,
 )
 import enum
-import uuid
 from datetime import datetime
 
 
@@ -43,14 +42,10 @@ class TransactionType(str, enum.Enum):
 
 
 
-def gen_uuid():
-    return str(uuid.uuid4())
-
-
 class User(Base):
     __tablename__ = "users"
-    id = Column(String, primary_key=True, default=gen_uuid)
-    username = Column(String, unique=True, index=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, unique=True, index=True, nullable=True)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     tier = Column(Enum(TierEnum), default=TierEnum.BEGINNER)
@@ -64,8 +59,8 @@ class User(Base):
 
 class Position(Base):
     __tablename__ = "positions"
-    id = Column(String, primary_key=True, default=gen_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     symbol = Column(String, index=True, nullable=False)
     market = Column(Enum(MarketEnum), nullable=False)
     shares = Column(Numeric(20, 8), nullable=False)
@@ -79,8 +74,8 @@ class Position(Base):
 
 class Transaction(Base):
     __tablename__ = "transactions"
-    id = Column(String, primary_key=True, default=gen_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     symbol = Column(String, nullable=False)
     market = Column(Enum(MarketEnum), nullable=False)
     type = Column(Enum(TransactionType), nullable=False)
@@ -104,8 +99,8 @@ class ShortableStock(Base):
 
 class EquitySnapshot(Base):
     __tablename__ = "equity_snapshots"
-    id = Column(String, primary_key=True, default=gen_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     total_equity = Column(Numeric(20, 4), nullable=False)
     maintenance_required = Column(Numeric(20, 4), nullable=False)
     created_at = Column(DateTime, server_default=func.now())

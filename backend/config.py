@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     ALLOW_TIER_UPGRADE: bool = False
 
     class Config:
-        env_file = ".env"
+        env_file = "backend/.env"
 
 
 settings = Settings()

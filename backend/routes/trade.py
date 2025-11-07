@@ -24,7 +24,7 @@ async def get_mock_user(db: AsyncSession = Depends(get_db)):
         # Create default demo user
         user = models.User(
             email="demo@tradesphere.com",
-            hashed_password="demo",
+            password_hash="demo",
             cash_balance=100000.0,
             tier="INTERMEDIATE"  # Give intermediate tier for shorting
         )
@@ -87,7 +87,7 @@ def alpaca_get_portfolio():
         return JSONResponse(content={"error": str(e)}, status_code=400)
 
 @router.post("/sell")
-async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:
@@ -119,7 +119,7 @@ async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depen
 
 
 @router.post("/short")
-async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_tier("INTERMEDIATE"))):
+async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:
@@ -155,7 +155,7 @@ async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depe
 
 
 @router.post("/cover")
-async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_tier("INTERMEDIATE"))):
+async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_mock_user)):
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:

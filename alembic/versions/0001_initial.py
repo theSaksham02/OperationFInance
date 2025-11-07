@@ -12,12 +12,8 @@ depends_on = None
 def upgrade():
     op.create_table(
         'users',
-<<<<<<< HEAD
         sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
-=======
-        sa.Column('id', sa.String(), primary_key=True),
->>>>>>> MK
-        sa.Column('username', sa.String(), unique=True, nullable=False),
+        sa.Column('username', sa.String(), unique=True, nullable=True),
         sa.Column('email', sa.String(), unique=True, nullable=False),
         sa.Column('password_hash', sa.String(), nullable=False),
         sa.Column('tier', sa.Enum('BEGINNER', 'INTERMEDIATE', 'ADVANCED', name='tierenum'), default='BEGINNER'),
@@ -27,13 +23,8 @@ def upgrade():
     )
     op.create_table(
         'positions',
-<<<<<<< HEAD
         sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id'), nullable=False),
-=======
-        sa.Column('id', sa.String(), primary_key=True),
-        sa.Column('user_id', sa.String(), sa.ForeignKey('users.id'), nullable=False),
->>>>>>> MK
         sa.Column('symbol', sa.String(), nullable=False),
         sa.Column('market', sa.Enum('US', 'IN', name='marketenum'), nullable=False),
         sa.Column('shares', sa.Numeric(20, 8), nullable=False),
@@ -44,13 +35,8 @@ def upgrade():
     )
     op.create_table(
         'transactions',
-<<<<<<< HEAD
         sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id'), nullable=False),
-=======
-        sa.Column('id', sa.String(), primary_key=True),
-        sa.Column('user_id', sa.String(), sa.ForeignKey('users.id'), nullable=False),
->>>>>>> MK
         sa.Column('symbol', sa.String(), nullable=False),
         sa.Column('market', sa.Enum('US', 'IN', name='marketenum'), nullable=False),
         sa.Column('type', sa.Enum('BUY', 'SELL', 'SHORT', 'COVER', name='transactiontype'), nullable=False),
@@ -70,13 +56,8 @@ def upgrade():
     )
     op.create_table(
         'equity_snapshots',
-<<<<<<< HEAD
         sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id'), nullable=False),
-=======
-        sa.Column('id', sa.String(), primary_key=True),
-        sa.Column('user_id', sa.String(), sa.ForeignKey('users.id'), nullable=False),
->>>>>>> MK
         sa.Column('total_equity', sa.Numeric(20, 4), nullable=False),
         sa.Column('maintenance_required', sa.Numeric(20, 4), nullable=False),
         sa.Column('created_at', sa.DateTime(), server_default=sa.func.now()),
