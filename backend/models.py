@@ -42,10 +42,13 @@ class TransactionType(str, enum.Enum):
     COVER = "COVER"
 
 
+
 def gen_uuid():
     return str(uuid.uuid4())
 
 
+class User(Base):
+    __tablename__ = "users"
     id = Column(String, primary_key=True, default=gen_uuid)
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
@@ -59,6 +62,8 @@ def gen_uuid():
     transactions = relationship("Transaction", back_populates="user")
 
 
+class Position(Base):
+    __tablename__ = "positions"
     id = Column(String, primary_key=True, default=gen_uuid)
     user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
     symbol = Column(String, index=True, nullable=False)
@@ -72,6 +77,8 @@ def gen_uuid():
     user = relationship("User", back_populates="positions")
 
 
+class Transaction(Base):
+    __tablename__ = "transactions"
     id = Column(String, primary_key=True, default=gen_uuid)
     user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
     symbol = Column(String, nullable=False)
@@ -86,12 +93,17 @@ def gen_uuid():
     user = relationship("User", back_populates="transactions")
 
 
+class ShortableStock(Base):
+    __tablename__ = "shortable_stocks"
+    symbol = Column(String, primary_key=True)
     market = Column(Enum(MarketEnum), nullable=False)
     borrow_rate_annual = Column(Float, nullable=False)
     available = Column(Boolean, default=True)
     last_updated = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
+class EquitySnapshot(Base):
+    __tablename__ = "equity_snapshots"
     id = Column(String, primary_key=True, default=gen_uuid)
     user_id = Column(String, ForeignKey("users.id"), index=True, nullable=False)
     total_equity = Column(Numeric(20, 4), nullable=False)
