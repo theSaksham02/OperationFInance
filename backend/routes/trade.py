@@ -1,50 +1,28 @@
 """Trade endpoints: buy, sell, short, cover, shortable list."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from decimal import Decimal
-<<<<<<< HEAD
 from typing import Optional
-=======
->>>>>>> MK
 from ..database import get_db
 from .. import crud, models
 from ..services import finnhub
 from ..schemas import Market
 from ..utils.shortable import initial_short_margin_required, maintenance_required, daily_interest_for_short
-<<<<<<< HEAD
-=======
 from ..security.auth import require_tier, get_current_user
->>>>>>> MK
 from ..services import stockgro
 from datetime import datetime
+
 
 router = APIRouter(prefix="/trade", tags=["trade"])
 
 
-<<<<<<< HEAD
-# Mock demo user for no-auth mode
-async def get_demo_user(db: AsyncSession):
-    """Get or create a demo user for testing without authentication"""
-    user = await crud.get_user(db, 1)  # Get first user
-    if not user:
-        # Create a demo user if none exists
-        from ..security.auth import get_password_hash
-        user = await crud.create_user(db, "demo", "demo@uptrade.global", get_password_hash("demo123"))
-    return user
 
-
-=======
->>>>>>> MK
-
-
+from backend.services.alpaca import place_order, get_portfolio
+from fastapi.responses import JSONResponse
 
 @router.post("/buy")
-<<<<<<< HEAD
-async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
-    current_user = await get_demo_user(db)
-=======
 async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
->>>>>>> MK
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     # Get price
@@ -73,14 +51,26 @@ async def buy(symbol: str, market: Market, qty: float, db: AsyncSession = Depend
     await crud.create_transaction(db, current_user, symbol, market, models.TransactionType.BUY.value, Decimal(qty), price, fees, total)
     return {"status": "ok", "symbol": symbol, "qty": qty, "price": float(price)}
 
+@router.post("/alpaca/order")
+def alpaca_place_order(symbol: str, qty: int, side: str):
+    """Place a paper trade order using Alpaca API."""
+    try:
+        order = place_order(symbol, qty, side)
+        return JSONResponse(content={"order": order.model_dump()}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
+
+@router.get("/alpaca/portfolio")
+def alpaca_get_portfolio():
+    """Get Alpaca paper trading portfolio positions."""
+    try:
+        positions = get_portfolio()
+        return JSONResponse(content={"positions": [p.model_dump() for p in positions]}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=400)
 
 @router.post("/sell")
-<<<<<<< HEAD
-async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
-    current_user = await get_demo_user(db)
-=======
 async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_user)):
->>>>>>> MK
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:
@@ -112,12 +102,7 @@ async def sell(symbol: str, market: Market, qty: float, db: AsyncSession = Depen
 
 
 @router.post("/short")
-<<<<<<< HEAD
-async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
-    current_user = await get_demo_user(db)
-=======
 async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_tier("INTERMEDIATE"))):
->>>>>>> MK
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:
@@ -153,12 +138,7 @@ async def short(symbol: str, market: Market, qty: float, db: AsyncSession = Depe
 
 
 @router.post("/cover")
-<<<<<<< HEAD
-async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db)):
-    current_user = await get_demo_user(db)
-=======
 async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_tier("INTERMEDIATE"))):
->>>>>>> MK
     if qty <= 0:
         raise HTTPException(status_code=400, detail="quantity must be > 0")
     if market == Market.US:
@@ -193,11 +173,7 @@ async def cover(symbol: str, market: Market, qty: float, db: AsyncSession = Depe
 
 
 @router.get("/shortable")
-<<<<<<< HEAD
 async def shortable_list(db: AsyncSession = Depends(get_db), market: Optional[Market] = None):
-=======
-async def shortable_list(db: AsyncSession = Depends(get_db), market: Market | None = None):
->>>>>>> MK
     m = None
     if market:
         m = market
