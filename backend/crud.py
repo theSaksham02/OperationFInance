@@ -30,11 +30,7 @@ async def create_user(db: AsyncSession, username: str, email: str, password_hash
     return user
 
 
-<<<<<<< HEAD
-async def get_user(db: AsyncSession, user_id: int) -> Optional[User]:
-=======
 async def get_user(db: AsyncSession, user_id: str) -> Optional[User]:
->>>>>>> MK
     q = await db.execute(select(User).where(User.id == user_id))
     return q.scalars().first()
 

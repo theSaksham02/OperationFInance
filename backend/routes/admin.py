@@ -8,20 +8,12 @@ from ..utils.shortable import generate_shortable_symbols, daily_interest_for_sho
 
 from ..config import settings
 from decimal import Decimal
-<<<<<<< HEAD
-=======
 from ..security.auth import require_admin
->>>>>>> MK
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
-@router.post("/refresh-shortable")
-<<<<<<< HEAD
-async def refresh_shortable(db: AsyncSession = Depends(get_db)):
-=======
 async def refresh_shortable(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
->>>>>>> MK
     # Use Finnhub and StockGro to get symbol universe
     us_symbols = []
     try:
@@ -50,22 +42,14 @@ async def refresh_shortable(db: AsyncSession = Depends(get_db), current_user: mo
 
 
 @router.get("/users")
-<<<<<<< HEAD
-async def list_users(db: AsyncSession = Depends(get_db)):
-=======
 async def list_users(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
->>>>>>> MK
     q = await db.execute(models.select(models.User))
     users = q.scalars().all()
     return users
 
 
 @router.put("/user-tier")
-<<<<<<< HEAD
-async def change_tier(user_id: str, tier: str, db: AsyncSession = Depends(get_db)):
-=======
 async def change_tier(user_id: str, tier: str, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
->>>>>>> MK
     user = await crud.get_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
@@ -80,11 +64,7 @@ async def change_tier(user_id: str, tier: str, db: AsyncSession = Depends(get_db
 
 
 @router.post("/simulate-daily-interest")
-<<<<<<< HEAD
-async def simulate_daily_interest(db: AsyncSession = Depends(get_db)):
-=======
 async def simulate_daily_interest(db: AsyncSession = Depends(get_db), current_user: models.User = Depends(require_admin)):
->>>>>>> MK
     # Apply one day's interest to all short positions
     q = await db.execute(models.select(models.Position).where(models.Position.shares < 0))
     positions = q.scalars().all()
