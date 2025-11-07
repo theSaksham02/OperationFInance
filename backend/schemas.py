@@ -31,7 +31,7 @@ class UserOut(BaseModel):
     is_admin: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class Token(BaseModel):
@@ -50,7 +50,7 @@ class PositionOut(BaseModel):
     unrealized_pnl: Optional[float]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TransactionOut(BaseModel):
     id: str
@@ -64,7 +64,7 @@ class TransactionOut(BaseModel):
     timestamp: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PortfolioSummary(BaseModel):
@@ -84,4 +84,4 @@ class ShortableOut(BaseModel):
     available: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True

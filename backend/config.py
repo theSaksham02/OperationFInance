@@ -9,7 +9,8 @@ Environment variables expected (example .env):
 # STOCKGRO_CLIENT_SECRET=supersecret
 # CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 """
-from pydantic import BaseSettings, Field, AnyHttpUrl
+from pydantic_settings import BaseSettings
+from pydantic import Field, AnyHttpUrl
 from typing import List, Optional
 
 
@@ -22,6 +23,7 @@ class Settings(BaseSettings):
     FINNHUB_API_KEY: str
     STOCKGRO_CLIENT_ID: str
     STOCKGRO_CLIENT_SECRET: str
+    stockgro_tenant_id: str = ""
 
     SHORTABLE_MIN_RATE: float = Field(0.02, ge=0)
     SHORTABLE_MAX_RATE: float = Field(0.18, ge=0)
