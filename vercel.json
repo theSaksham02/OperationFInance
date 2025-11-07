@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "buildCommand": "cd Frontend/material-kit-react-main && npm install && npm run build",
+  "outputDirectory": "Frontend/material-kit-react-main/.next",
+  "framework": "nextjs",
+  "installCommand": "cd Frontend/material-kit-react-main && npm install"
+}

@@ -1,9 +1,9 @@
+/* eslint-disable unicorn/numeric-separators-style */
 "use client";
 
 import * as React from 'react';
 import { keyframes } from '@emotion/react';
 import { Box, Chip, Container, Stack, Typography } from '@mui/material';
-import type { Theme } from '@mui/material/styles';
 
 interface MarketTickerItem {
   symbol: string;
@@ -57,14 +57,21 @@ export function LandingTicker(): React.JSX.Element {
   const doubledItems = React.useMemo(() => [...items, ...items], [items]);
 
   return (
-    <Box component="section" sx={{ borderBlock: 1, borderColor: 'divider', backgroundColor: 'background.level1' }}>
+    <Box
+      component="section"
+      sx={{
+        borderBlock: 1,
+        borderColor: 'rgba(255,255,255,0.08)',
+        background: 'linear-gradient(90deg, rgba(5, 12, 28, 0.55), rgba(3, 8, 20, 0.65))',
+      }}
+    >
       <Container maxWidth={false} disableGutters sx={{ maxWidth: 'none' }}>
         <Box
-          sx={(theme: Theme) => ({
+          sx={() => ({
             overflow: 'hidden',
             whiteSpace: 'nowrap',
             py: 2.5,
-            background: `linear-gradient(90deg, ${theme.palette.background.level1}, ${theme.palette.background.level2})`,
+            background: 'linear-gradient(90deg, rgba(7, 16, 36, 0.65), rgba(6, 12, 28, 0.65))',
           })}
         >
           <Stack
@@ -77,10 +84,10 @@ export function LandingTicker(): React.JSX.Element {
           >
             {doubledItems.map((item: MarketTickerItem, index: number) => (
               <Stack key={`${item.symbol}-${index}`} direction="row" spacing={2} alignItems="center">
-                <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                <Typography variant="subtitle2" sx={{ color: 'rgba(167, 188, 228, 0.7)', fontWeight: 600 }}>
                   {item.symbol}
                 </Typography>
-                <Typography variant="subtitle2" sx={{ color: 'text.primary', fontWeight: 600 }}>
+                <Typography variant="subtitle2" sx={{ color: 'rgba(255,255,255,0.92)', fontWeight: 600 }}>
                   {item.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </Typography>
                 <Chip

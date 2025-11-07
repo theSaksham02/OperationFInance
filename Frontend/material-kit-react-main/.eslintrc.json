@@ -1,0 +1,10 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "unicorn/prefer-export-from": "off",
+    "unicorn/no-negated-condition": "off",
+    "unicorn/switch-case-braces": "off",
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/prefer-global-this": "off"
+  }
+}

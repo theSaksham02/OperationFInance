@@ -2,18 +2,40 @@
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+<<<<<<< HEAD
+import bcrypt
+=======
 from passlib.context import CryptContext
+>>>>>>> MK
 from sqlalchemy.ext.asyncio import AsyncSession
 from .. import crud, models
 from ..database import get_db
 from ..config import settings
 from typing import Literal
 
+<<<<<<< HEAD
+=======
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+>>>>>>> MK
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+<<<<<<< HEAD
+    # Truncate to 72 bytes for bcrypt compatibility
+    password_bytes = plain_password[:72].encode('utf-8')
+    hashed_bytes = hashed_password.encode('utf-8') if isinstance(hashed_password, str) else hashed_password
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
+
+def get_password_hash(password: str) -> str:
+    # Bcrypt has a 72-byte limit, truncate if necessary
+    password_bytes = password[:72].encode('utf-8')
+    hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    return hashed.decode('utf-8')
+
+def create_access_token(data: dict, expires_minutes: int = None) -> str:
+    from datetime import datetime, timedelta, timezone
+=======
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
@@ -21,6 +43,7 @@ def get_password_hash(password: str) -> str:
 
 def create_access_token(data: dict, expires_minutes: int = None) -> str:
     from datetime import datetime, timedelta
+>>>>>>> MK
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=expires_minutes or settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
@@ -34,10 +57,18 @@ async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depe
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+<<<<<<< HEAD
+        user_id_str: str = payload.get("sub")
+        if user_id_str is None:
+            raise credentials_exception
+        user_id = int(user_id_str)  # Convert string to int
+    except (JWTError, ValueError):
+=======
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:
+>>>>>>> MK
         raise credentials_exception
     user = await crud.get_user(db, user_id)
     if user is None:

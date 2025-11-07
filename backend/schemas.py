@@ -23,15 +23,23 @@ class UserCreate(BaseModel):
 
 
 class UserOut(BaseModel):
+<<<<<<< HEAD
+    id: int
+=======
     id: str
+>>>>>>> MK
     username: str
     email: EmailStr
     tier: Tier
     cash_balance: float
     is_admin: bool
 
+<<<<<<< HEAD
+    model_config = {"from_attributes": True}
+=======
     class Config:
         orm_mode = True
+>>>>>>> MK
 
 
 class Token(BaseModel):
@@ -49,12 +57,20 @@ class PositionOut(BaseModel):
     current_value: Optional[float]
     unrealized_pnl: Optional[float]
 
+<<<<<<< HEAD
+    model_config = {"from_attributes": True}
+
+
+class TransactionOut(BaseModel):
+    id: int
+=======
     class Config:
         orm_mode = True
 
 
 class TransactionOut(BaseModel):
     id: str
+>>>>>>> MK
     symbol: str
     market: Market
     type: str
@@ -64,8 +80,12 @@ class TransactionOut(BaseModel):
     total_amount: float
     timestamp: datetime
 
+<<<<<<< HEAD
+    model_config = {"from_attributes": True}
+=======
     class Config:
         orm_mode = True
+>>>>>>> MK
 
 
 class PortfolioSummary(BaseModel):
@@ -84,5 +104,9 @@ class ShortableOut(BaseModel):
     borrow_rate_annual: float
     available: bool
 
+<<<<<<< HEAD
+    model_config = {"from_attributes": True}
+=======
     class Config:
         orm_mode = True
+>>>>>>> MK
