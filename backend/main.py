@@ -27,13 +27,13 @@ This module wires routers, CORS, structured logging, and health checks.
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import auth, portfolio, trade, admin, analytics, market
+from .routes import auth, portfolio, trade, admin, analytics, market, websocket
 from .config import settings
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger("tradesphere")
 
-app = FastAPI(title="TradeSphere API")
+app = FastAPI(title="TradeSphere API - Bloomberg-Style Terminal")
 
 if settings.CORS_ORIGINS:
     origins = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
@@ -53,6 +53,7 @@ app.include_router(trade.router)
 app.include_router(admin.router)
 app.include_router(analytics.router)
 app.include_router(market.router)
+app.include_router(websocket.router)
 
 
 @app.get("/health")
