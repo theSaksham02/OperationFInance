@@ -4,11 +4,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..database import get_db
 from .. import crud, models
-from ..schemas import PortfolioSummary, PositionOut
+from ..schemas import PortfolioSummary, PositionOut, Market
 from ..services.finnhub import get_quote
+from ..services.alpaca import get_portfolio as get_alpaca_portfolio
 from decimal import Decimal
 from typing import List
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 
 
@@ -35,6 +38,8 @@ async def _compute_live_values(db: AsyncSession, user) -> PortfolioSummary:
     pos_out = []
     total_long = Decimal(0)
     total_short = Decimal(0)
+    
+    # Get local database positions
     for p in positions:
         cp_data = await get_quote(p.symbol)
         current_price = Decimal(cp_data.get("c", 0))
@@ -45,7 +50,47 @@ async def _compute_live_values(db: AsyncSession, user) -> PortfolioSummary:
             total_long += current_value
         else:
             total_short += (-current_value)
-        pos_out.append(PositionOut(symbol=p.symbol, market=p.market, shares=float(shares), avg_price=float(p.avg_price), borrow_rate_annual=p.borrow_rate_annual, current_price=float(current_price), current_value=float(current_value), unrealized_pnl=float(unrealized)))
+        pos_out.append(PositionOut(
+            symbol=p.symbol, 
+            market=p.market, 
+            shares=float(shares), 
+            avg_price=float(p.avg_price), 
+            borrow_rate_annual=p.borrow_rate_annual, 
+            current_price=float(current_price), 
+            current_value=float(current_value), 
+            unrealized_pnl=float(unrealized)
+        ))
+    
+    # Get Alpaca paper trading positions
+    try:
+        alpaca_positions = get_alpaca_portfolio()
+        for alpaca_pos in alpaca_positions:
+            # Add Alpaca positions to the list
+            symbol = alpaca_pos.symbol
+            shares = Decimal(str(alpaca_pos.qty))
+            avg_price = Decimal(str(alpaca_pos.avg_entry_price))
+            current_price = Decimal(str(alpaca_pos.current_price))
+            current_value = shares * current_price
+            unrealized = Decimal(str(alpaca_pos.unrealized_pl))
+            
+            if shares >= 0:
+                total_long += current_value
+            else:
+                total_short += (-current_value)
+            
+            pos_out.append(PositionOut(
+                symbol=f"{symbol} (Alpaca)",
+                market=Market.US,
+                shares=float(shares),
+                avg_price=float(avg_price),
+                borrow_rate_annual=None,
+                current_price=float(current_price),
+                current_value=float(current_value),
+                unrealized_pnl=float(unrealized)
+            ))
+    except Exception as e:
+        logger.warning(f"Failed to fetch Alpaca positions: {e}")
+        # Continue without Alpaca data
 
     cash = Decimal(user.cash_balance)
     equity = cash + total_long - total_short
