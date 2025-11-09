@@ -18,22 +18,9 @@ import Chip from '@mui/material/Chip';
 import { CaretLeft as CaretLeftIcon } from '@phosphor-icons/react/dist/ssr/CaretLeft';
 import { CaretRight as CaretRightIcon } from '@phosphor-icons/react/dist/ssr/CaretRight';
 import { Flag as FlagIcon } from '@phosphor-icons/react/dist/ssr/Flag';
-import { ChartLine as ChartLineIcon } from '@phosphor-icons/react/dist/ssr/ChartLine';
 import { Columns as ColumnsIcon } from '@phosphor-icons/react/dist/ssr/Columns';
 import { ShoppingCart as ShoppingCartIcon } from '@phosphor-icons/react/dist/ssr/ShoppingCart';
-import { ListBullets as ListBulletsIcon } from '@phosphor-icons/react/dist/ssr/ListBullets';
-import { ArrowsClockwise as ArrowsClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowsClockwise';
 import { Receipt as ReceiptIcon } from '@phosphor-icons/react/dist/ssr/Receipt';
-import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
-import { Funnel as FunnelIcon } from '@phosphor-icons/react/dist/ssr/Funnel';
-import { Newspaper as NewspaperIcon } from '@phosphor-icons/react/dist/ssr/Newspaper';
-import { CalendarBlank as CalendarBlankIcon } from '@phosphor-icons/react/dist/ssr/CalendarBlank';
-import { ShieldCheck as ShieldCheckIcon } from '@phosphor-icons/react/dist/ssr/ShieldCheck';
-import { Bell as BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
-import { Calculator as CalculatorIcon } from '@phosphor-icons/react/dist/ssr/Calculator';
-import { Question as QuestionIcon } from '@phosphor-icons/react/dist/ssr/Question';
-import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
-import { GearSix as GearSixIcon } from '@phosphor-icons/react/dist/ssr/GearSix';
 
 import { useMarketTheme } from '@/contexts/market-theme-context';
 import type { MarketType } from '@/contexts/market-theme-context';
@@ -66,55 +53,9 @@ const navGroups: NavGroup[] = [
   {
     title: 'Trading',
     items: [
-      { key: 'dashboard', title: 'Dashboard Home', icon: ColumnsIcon, href: '/dashboard/home' },
-      {
-        key: 'orders-group',
-        title: 'Order Tickets',
-        icon: ShoppingCartIcon,
-        children: [
-          { key: 'order-stocks', title: 'Stocks/ETFs', icon: ShoppingCartIcon, href: '/dashboard/orders/stocks' },
-          { key: 'order-short', title: 'Short Sell', icon: ShoppingCartIcon, href: '/dashboard/orders/short' },
-          {
-            key: 'order-derivatives',
-            title: 'Derivatives',
-            icon: ShoppingCartIcon,
-            href: '/dashboard/orders/derivatives',
-          },
-        ],
-      },
-      { key: 'positions', title: 'Open Positions', icon: ListBulletsIcon, href: '/dashboard/positions' },
-      { key: 'orders', title: 'Orders', icon: ArrowsClockwiseIcon, href: '/dashboard/orders' },
+      { key: 'dashboard', title: 'Dashboard', icon: ColumnsIcon, href: '/dashboard/home' },
+      { key: 'orders', title: 'Place Order', icon: ShoppingCartIcon, href: '/dashboard/orders' },
       { key: 'transactions', title: 'Transactions', icon: ReceiptIcon, href: '/dashboard/transactions' },
-      { key: 'shortable', title: 'Shortable List', icon: ListBulletsIcon, href: '/dashboard/shortable' },
-    ],
-  },
-  {
-    title: 'Analysis',
-    items: [
-      { key: 'watchlists', title: 'Watchlists', icon: EyeIcon, href: '/dashboard/watchlists' },
-      { key: 'screeners', title: 'Screeners', icon: FunnelIcon, href: '/dashboard/screeners' },
-      { key: 'chart', title: 'Advanced Chart', icon: ChartLineIcon, href: '/dashboard/chart' },
-      { key: 'news', title: 'Market News', icon: NewspaperIcon, href: '/dashboard/news' },
-      { key: 'calendar', title: 'Economic Calendar', icon: CalendarBlankIcon, href: '/dashboard/calendar' },
-    ],
-  },
-  {
-    title: 'Risk',
-    items: [{ key: 'risk', title: 'Equity & Margin Center', icon: ShieldCheckIcon, href: '/dashboard/risk' }],
-  },
-  {
-    title: 'Tools',
-    items: [
-      { key: 'alerts', title: 'Alerts', icon: BellIcon, href: '/dashboard/alerts' },
-      { key: 'calculators', title: 'Calculators', icon: CalculatorIcon, href: '/dashboard/calculators' },
-      { key: 'help', title: 'Help/Chatbot', icon: QuestionIcon, href: '/dashboard/help' },
-    ],
-  },
-  {
-    title: 'Admin',
-    items: [
-      { key: 'admin-users', title: 'Users/Tiers', icon: UsersIcon, href: '/dashboard/admin/users' },
-      { key: 'admin-refresh', title: 'Shortable Refresh', icon: GearSixIcon, href: '/dashboard/admin/refresh' },
     ],
   },
 ];
@@ -456,10 +397,10 @@ export function TradingSidebar({ open: initialOpen = true }: TradingSidebarProps
             }}
           >
             <Typography sx={{ fontSize: '0.75rem', color: 'var(--market-textSecondary, rgba(255,255,255,0.7))', mb: 0.75 }}>
-              🎉 Platform Update
+              🚀 Paper Trading Active
             </Typography>
             <Typography sx={{ fontSize: '0.8rem', color: 'var(--market-textSecondary, rgba(255,255,255,0.65))' }}>
-              Advanced chart overlays and auto-risk checks are live for both desks.
+              Live WebSocket streaming ready. Add API keys for real market data.
             </Typography>
           </Grid>
         ) : null}
