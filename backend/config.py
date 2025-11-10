@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     # Alpaca Paper Trading API
     ALPACA_API_KEY: str = ""
     ALPACA_API_SECRET: str = ""
+    ALPACA_BASE_URL: str = "https://paper-api.alpaca.markets"
 
     SHORTABLE_MIN_RATE: float = Field(0.02, ge=0)
     SHORTABLE_MAX_RATE: float = Field(0.18, ge=0)

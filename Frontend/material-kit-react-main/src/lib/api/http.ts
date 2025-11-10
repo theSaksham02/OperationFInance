@@ -45,14 +45,17 @@ export async function authorizedFetch(path: string, init: RequestInit = {}): Pro
   // Authentication disabled - direct API access
   const headers = new Headers(init.headers ?? undefined);
 
+  // Ensure API_BASE_URL is defined, fallback to localhost
+  const baseUrl = API_BASE_URL || 'http://localhost:8000';
+
   // Debug: log API_BASE_URL value
   if (typeof window !== 'undefined') {
     // Only log in browser/client
     // eslint-disable-next-line no-console
-    console.log('API_BASE_URL:', API_BASE_URL);
+    console.log('API_BASE_URL:', baseUrl);
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${baseUrl}${path}`, {
     ...init,
     headers,
   });
