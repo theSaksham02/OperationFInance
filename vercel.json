@@ -3,5 +3,37 @@
   "buildCommand": "cd Frontend/material-kit-react-main && npm install && npm run build",
   "outputDirectory": "Frontend/material-kit-react-main/.next",
   "framework": "nextjs",
-  "installCommand": "cd Frontend/material-kit-react-main && npm install"
+  "installCommand": "cd Frontend/material-kit-react-main && npm install",
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/health",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/api/market/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/api/portfolio/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/api/trade/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/api/analytics/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
+    }
+  ]
 }
