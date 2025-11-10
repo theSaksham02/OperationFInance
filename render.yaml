@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: operationfinance-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALPACA_API_KEY
+        value: PKTENSECGJWP2KMDXBYKEPCJNO
+      - key: ALPACA_API_SECRET
+        value: DW7K5pHW7jKGWXnLnq6xDjg3aPa2ZMkqwhCxoTQky8Ms
+      - key: ALPACA_BASE_URL
+        value: https://paper-api.alpaca.markets
+      - key: FINNHUB_API_KEY
+        value: dummy
+      - key: STOCKGRO_API_KEY
+        value: your_key_here
